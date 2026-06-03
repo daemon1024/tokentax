@@ -1,0 +1,52 @@
+diff --git a/src/cart/src/Program.cs b/src/cart/src/Program.cs
+index ff383aa..63b44ac 100644
+--- a/src/cart/src/Program.cs
++++ b/src/cart/src/Program.cs
+@@ -58,7 +58,8 @@ builder.Services.AddSingleton(x =>
+     new CartService(
+         x.GetRequiredService<ICartStore>(),
+         new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"),
+-        x.GetRequiredService<IFeatureClient>()
++        x.GetRequiredService<IFeatureClient>(),
++        x.GetRequiredService<ILogger<CartService>>()
+ ));
+ 
+ 
+diff --git a/src/cart/src/services/CartService.cs b/src/cart/src/services/CartService.cs
+index 6218040..beb2eed 100644
+--- a/src/cart/src/services/CartService.cs
++++ b/src/cart/src/services/CartService.cs
+@@ -7,6 +7,7 @@ using Grpc.Core;
+ using cart.cartstore;
+ using OpenFeature;
+ using Oteldemo;
++using Microsoft.Extensions.Logging;
+ 
+ namespace cart.services;
+ 
+@@ -17,12 +18,14 @@ public class CartService : Oteldemo.CartService.CartServiceBase
+     private readonly ICartStore _badCartStore;
+     private readonly ICartStore _cartStore;
+     private readonly IFeatureClient _featureFlagHelper;
++    private readonly ILogger<CartService> _logger;
+ 
+-    public CartService(ICartStore cartStore, ICartStore badCartStore, IFeatureClient featureFlagService)
++    public CartService(ICartStore cartStore, ICartStore badCartStore, IFeatureClient featureFlagService, ILogger<CartService> logger)
+     {
+         _badCartStore = badCartStore;
+         _cartStore = cartStore;
+         _featureFlagHelper = featureFlagService;
++        _logger = logger;
+     }
+ 
+     public override async Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
+@@ -93,6 +96,9 @@ public class CartService : Oteldemo.CartService.CartServiceBase
+         {
+             Activity.Current?.AddException(ex);
+             Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
++            // tokentax: trace-correlated origin ERROR log so the fault is log-recoverable
++            // (.NET OTel logging attaches trace_id from the current Activity).
++            _logger.LogError(ex, "failed to empty cart for user {UserId}: cart store unavailable", request.UserId);
+             throw;
+         }
+ 

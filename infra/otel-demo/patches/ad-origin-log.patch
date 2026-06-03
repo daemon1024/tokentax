@@ -1,0 +1,14 @@
+diff --git a/src/ad/src/main/java/oteldemo/AdService.java b/src/ad/src/main/java/oteldemo/AdService.java
+index 67924e4..eb5a947 100644
+--- a/src/ad/src/main/java/oteldemo/AdService.java
++++ b/src/ad/src/main/java/oteldemo/AdService.java
+@@ -236,6 +236,9 @@ public final class AdService {
+ 
+         // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
+         if (ffClient.getBooleanValue(AD_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
++          // tokentax: trace-correlated origin ERROR log so the fault is log-recoverable
++          // (the OTel log4j2 appender attaches trace_id from the active span).
++          logger.error("failed to retrieve ads: ad service backend unavailable");
+           throw new StatusRuntimeException(Status.UNAVAILABLE);
+         }
+ 
