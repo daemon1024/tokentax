@@ -1,19 +1,36 @@
 {
-  "task": "otel_find_failed_traces",
-  "n": 11184,
-  "affected": 138,
-  "drain": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
-    "f1_ci95": [
-      0.0,
-      1.0
-    ]
+  "find_failed_traces": {
+    "n": 35451,
+    "affected": 250,
+    "drain": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "f1_ci95": [
+        0.0,
+        1.0
+      ]
+    },
+    "any_error_baseline": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
   },
-  "any_error_baseline": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0
+  "root_cause": {
+    "n": 250,
+    "by_culprit": {
+      "product-catalog": 225,
+      "cart": 9,
+      "ad": 16
+    },
+    "drain": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0
+    },
+    "majority_baseline": {
+      "accuracy": 0.9,
+      "macro_f1": 0.47368421052631576
+    }
   }
 }
