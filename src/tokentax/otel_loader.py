@@ -11,6 +11,7 @@ condition variants, methods, and Drain all work unchanged across both data sourc
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 from tokentax.nezha import LogRecord
@@ -83,4 +84,31 @@ def parse_otlp_jsonl(path: str | Path) -> list[LogRecord]:
                         level=_sev(int(lr.get("severityNumber", 0) or 0), lr.get("severityText", "")),
                         parse_fail=False,
                     ))
+    return out
+
+
+@dataclass
+class LabeledWindow:
+    label: str            # "normal" | "anomalous"
+    fault: str | None     # the active flag, or None
+    records: list[LogRecord]
+    start_ns: int
+    end_ns: int
+
+    @property
+    def key(self) -> str:
+        return f"{self.fault or 'normal'}@{self.start_ns}"
+
+
+def windows_from_manifest(logs_path: str | Path, manifest_path: str | Path) -> list[LabeledWindow]:
+    """Slice the captured OTLP-JSON stream into the labeled windows recorded by the capture loop."""
+    recs = parse_otlp_jsonl(logs_path)
+    recs.sort(key=lambda r: r.time_unix_nano)
+    times = [r.time_unix_nano for r in recs]
+    import bisect
+    out: list[LabeledWindow] = []
+    for m in json.loads(Path(manifest_path).read_text()):
+        s, e = int(m["start_ns"]), int(m["end_ns"])
+        lo, hi = bisect.bisect_left(times, s), bisect.bisect_right(times, e)
+        out.append(LabeledWindow(m["label"], m.get("fault"), recs[lo:hi], s, e))
     return out
