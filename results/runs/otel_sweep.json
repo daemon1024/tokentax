@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "in_context/plain": {
+      "mean_tokens": 365884,
+      "accuracy": 1.0,
+      "n": 1
+    },
+    "in_context/structured": {
+      "mean_tokens": 555104,
+      "accuracy": 0.0,
+      "n": 1
+    },
+    "rlm/plain": {
+      "mean_tokens": 5698,
+      "accuracy": 1.0,
+      "n": 1
+    },
+    "rlm/structured": {
+      "mean_tokens": 4714,
+      "accuracy": 1.0,
+      "n": 1
+    }
+  },
+  "total_tokens_spent": 931400,
+  "n_windows": 1
+}

@@ -89,18 +89,28 @@ class LogREPL:
 
     # --- dispatch for the orchestrator ---
     def call(self, name: str, args: dict) -> str:
+        # small models often emit slightly-wrong arg names (e.g. 'search' for 'pattern'),
+        # so accept common aliases rather than failing the tool call.
+        def arg(*keys, default=""):
+            for k in keys:
+                if k in args and args[k] not in (None, ""):
+                    return args[k]
+            return default
         try:
             if name == "overview":
                 return self.overview()
             if name == "grep":
-                return self.grep(str(args.get("pattern", "")), int(args.get("max_matches", 25)))
+                return self.grep(str(arg("pattern", "search", "query", "q", "regex", "term")),
+                                 int(arg("max_matches", "limit", "max", default=25)))
             if name == "peek":
-                return self.peek(int(args.get("start", 0)), int(args.get("end", 0)))
+                return self.peek(int(arg("start", "from", "begin", default=0)),
+                                 int(arg("end", "to", "stop", default=0)))
             if name == "extract_trace_ids":
                 return self.extract_trace_ids(
-                    bool(args.get("only_with_errors", False)), int(args.get("limit", 40)))
+                    bool(arg("only_with_errors", "errors_only", "errors", default=False)),
+                    int(arg("limit", "max", default=40)))
             if name == "lines_for_trace":
-                return self.lines_for_trace(str(args.get("trace_id", "")))
+                return self.lines_for_trace(str(arg("trace_id", "traceId", "id", "trace")))
         except (ValueError, TypeError, KeyError) as e:
             return f"tool error in {name}: {e}"
         return f"unknown tool: {name}"

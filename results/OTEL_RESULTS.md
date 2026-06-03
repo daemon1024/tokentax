@@ -72,6 +72,28 @@ the plan be upgraded (Pro/Max) or run against a local Ollama.
 0.41× (plain) / 0.16× (structured) of in-context tokens. The OTel sweep would confirm this on
 recoverable data; it is re-runnable (`python scripts/run_otel_sweep.py --manifest …`) once quota resets.
 
+## LLM sweep COMPLETED locally (qwen3:8b, cloud quota bypassed) — 2026-06-04
+Ran on local Ollama (cask install; `OLLAMA_HOST=localhost`, no key) to bypass the cloud quota. One
+recoverable `productCatalogFailure` window, root-cause task. **The thesis payoff:**
+
+| method | condition | tokens | culprit found |
+|---|---|---|---|
+| in-context | plain | 365,864 | ✓ |
+| in-context | structured | 555,079 | ✗ (read it all, missed the fault) |
+| **RLM** | **plain** | **5,631** | ✓ |
+| **RLM** | **structured** | **4,631** | ✓ |
+
+- **RLM uses 0.016× (plain) / 0.008× (structured) of in-context tokens — 62×–118× cheaper.**
+- **Structure is free compression for the navigator, a tax for the reader:** RLM-structured is the
+  cheapest cell (4,631) — it greps the ERROR straight to product-catalog regardless of JSON verbosity;
+  in-context-structured is the most expensive (555k) AND wrong — the 8B drowned in verbose OTLP-JSON.
+- RLM is also more robust: correct in both conditions; in-context fragile on the big structured window.
+
+Caveats: n=1 window, qwen3:8b (the in-context-structured *miss* is partly an 8B limitation; the token
+COST asymmetry is model-independent and robust). Consistent with the Nezha smoke (RLM 0.16–0.41×),
+more extreme here because OTel windows are larger. Re-run with `scripts/run_otel_sweep.py` (cloud or
+local) for more windows / a larger model.
+
 ## Next
-- Retry the sweep when the Ollama quota resets (or point OLLAMA_HOST at a local Ollama).
-- Harder accuracy task (overlapping faults) for an accuracy-differentiating headline.
+- More windows + the cloud 480b (when quota resets) for tighter numbers.
+- Harder accuracy task (overlapping faults) so accuracy — not just cost — differentiates methods.
