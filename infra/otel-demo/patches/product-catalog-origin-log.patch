@@ -1,0 +1,17 @@
+diff --git a/src/product-catalog/main.go b/src/product-catalog/main.go
+index 87e0cc8..46b572a 100644
+--- a/src/product-catalog/main.go
++++ b/src/product-catalog/main.go
+@@ -370,6 +370,12 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
+ 		msg := "Error: Product Catalog Fail Feature Flag Enabled"
+ 		span.SetStatus(otelcodes.Error, msg)
+ 		span.AddEvent(msg)
++		// tokentax: emit a trace-correlated ERROR log at the origin so the fault is
++		// log-recoverable (the otelslog bridge attaches trace_id/span_id from ctx).
++		logger.LogAttrs(ctx, slog.LevelError, "failed to retrieve product from catalog backend",
++			slog.String("demo.product.id", req.Id),
++			slog.String("error", "catalog lookup returned an internal error"),
++		)
+ 		return nil, status.Error(codes.Internal, msg)
+ 	}
+ 
