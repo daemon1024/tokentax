@@ -18,14 +18,13 @@ from tokentax.methods.repl import LogREPL, tool_schemas
 from tokentax.nezha import LogRecord
 
 _SYS = (
-    "You are an SRE diagnosing ONE injected fault in a microservice log window that is too large to "
-    "read in full. Use the tools to navigate efficiently. IMPORTANT: in this system, healthy "
-    "services also emit some ERROR lines during normal operation, so do not just pick the service "
-    "with the most errors — look for the service that ORIGINATES an abnormal/causal error pattern "
-    "(e.g. a distinctive exception, a failure that propagates). "
+    "You are an SRE diagnosing whether a microservice log window (too large to read in full) "
+    "contains a fault. AT MOST one service is failing. Use the tools to navigate efficiently. "
+    "IMPORTANT: healthy services also emit some ERROR lines during normal operation, so look for a "
+    "service ORIGINATING a distinctive failure (e.g. a backend-unavailable error). "
     "{nav} "
-    "When confident, reply with ONLY JSON {{\"culprit_service\": \"<service-name>\"}} and DO NOT "
-    "call a tool in that final turn."
+    "When confident, reply with ONLY JSON {{\"culprit_service\": \"<service-name or none>\"}} "
+    "(use 'none' if no service is failing) and DO NOT call a tool in that final turn."
 )
 _NAV_AWARE = ("This window has trace ids: use extract_trace_ids(only_with_errors=true) to find "
               "failing traces, then lines_for_trace to read a failing trace end-to-end and see "

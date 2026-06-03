@@ -23,9 +23,10 @@ _ENC = tiktoken.get_encoding("cl100k_base")
 SYSTEM = {
     "root_cause": (
         "You are an SRE analyzing logs from ONE fixed time window of a microservice system. "
-        "Exactly one service has an injected fault. Identify the single culprit service, using the "
-        "service name exactly as it appears in the logs (e.g. 'ts-basic-service' or 'paymentservice'). "
-        'Respond with ONLY JSON: {"culprit_service": "<name>"}.'
+        "AT MOST one service has a fault. Identify the single culprit service (the one emitting "
+        "the failure), using the service name exactly as it appears in the logs (e.g. "
+        "'product-catalog' or 'cart'). If no service is failing, answer 'none'. "
+        'Respond with ONLY JSON: {"culprit_service": "<name or none>"}.'
     ),
     "trace_anomaly": (
         "You are an SRE. The window below contains many distributed traces; some are affected by an "

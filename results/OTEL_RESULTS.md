@@ -56,5 +56,22 @@ A genuinely accuracy-*hard* task would require overlapping/ambiguous faults — 
 `cart-origin-log.patch` (.NET ILogger via constructor + Program.cs DI). Note: cartFailure needs
 payment OFF (checkout must complete to reach EmptyCart); the capture loop resets all flags per class.
 
-## Next (cloud-gated)
-Run in-context + RLM on this recoverable dataset to quantify the token win at saturated accuracy.
+## LLM sweep — BLOCKED by Ollama Cloud quota (2026-06-04)
+Ran `scripts/run_otel_sweep.py` (in-context vs RLM, plain vs structured, root-cause task) on small
+windows (~310–457k tokens). Got ONE data point before the account quota hit:
+- **in-context, plain, normal window: 457,133 input tokens** (read across 4 chunks) → correctly
+  answered "none" ✓. This is the full-read cost the RLM must beat.
+
+Then **HTTP 429 Too Many Requests** on every subsequent call — including a tiny "reply OK" — with no
+`Retry-After`. This is an **account-level GPU-time quota exhaustion** (Ollama free-tier 5h/weekly cap,
+flagged in REVIEW), not a transient rate limit, so it blocks all models. Hardened the client
+(429-aware backoff, honor Retry-After, 6 retries) — committed — but the quota must reset (hours) or
+the plan be upgraded (Pro/Max) or run against a local Ollama.
+
+**Prior cloud evidence (not blocked, already committed in SMOKE_RESULTS.md):** on Nezha, RLM used
+0.41× (plain) / 0.16× (structured) of in-context tokens. The OTel sweep would confirm this on
+recoverable data; it is re-runnable (`python scripts/run_otel_sweep.py --manifest …`) once quota resets.
+
+## Next
+- Retry the sweep when the Ollama quota resets (or point OLLAMA_HOST at a local Ollama).
+- Harder accuracy task (overlapping faults) for an accuracy-differentiating headline.

@@ -53,7 +53,7 @@ class OllamaClient:
         host: str | None = None,
         model: str | None = None,
         timeout: float = 300.0,
-        max_retries: int = 4,
+        max_retries: int = 6,
     ) -> None:
         self.host = (host or os.environ.get("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
         self.model = model or os.environ.get("OLLAMA_MODEL", "qwen3.5:9b")
@@ -86,10 +86,19 @@ class OllamaClient:
                     r = await client.post(url, json=payload, headers=self._headers())
                     r.raise_for_status()
                     return r.json()
-                # httpx.HTTPError is the base class, so it also covers TransportError.
-                except httpx.HTTPError as e:  # pragma: no cover
+                except httpx.HTTPStatusError as e:  # pragma: no cover
                     last = e
-                    await asyncio.sleep(2**attempt * 0.5)
+                    if e.response.status_code == 429:  # cloud rate limit: back off hard
+                        try:
+                            wait = float(e.response.headers.get("retry-after", 0)) or 2 ** attempt * 8
+                        except ValueError:
+                            wait = 2 ** attempt * 8
+                        await asyncio.sleep(min(wait, 120))
+                    else:
+                        await asyncio.sleep(2 ** attempt * 0.5)
+                except httpx.HTTPError as e:  # pragma: no cover (transport/timeouts)
+                    last = e
+                    await asyncio.sleep(2 ** attempt * 0.5)
         raise RuntimeError(f"Ollama {url} failed after {self.max_retries} retries: {last}")
 
     @staticmethod
