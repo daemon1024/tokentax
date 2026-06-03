@@ -1,0 +1,13 @@
+# tokentax capture override for the OTel Collector.
+# Loaded last by the collector (--config=/etc/otelcol-config-extras.yml). The collector REPLACES
+# arrays, so we repeat the upstream logs exporter (debug) and add a file exporter that writes
+# OTLP-JSON LogRecords (one JSON object per line, trace_id/span_id included) to a mounted volume.
+exporters:
+  file/capture:
+    path: /capture/logs.jsonl
+
+service:
+  pipelines:
+    logs:
+      # base pipeline exporters were [debug]; repeat debug, add our file capture.
+      exporters: [debug, file/capture]

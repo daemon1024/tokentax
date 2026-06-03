@@ -1,0 +1,9 @@
+# tokentax capture overlay for the OTel Demo.
+# Usage (from the otel-demo-src clone):
+#   docker compose -f compose.yaml -f <repo>/infra/otel-demo/compose.capture.yaml up -d
+# Mounts the tokentax capture dir into the collector; the file/capture exporter (from our
+# otelcol-config-extras.yml, copied into the clone) writes OTLP-JSON LogRecords there.
+services:
+  otel-collector:
+    volumes:
+      - /Users/daemon1024/play/tokentax/data/otel_demo:/capture
