@@ -1,0 +1,45 @@
+[project]
+name = "tokentax"
+version = "0.1.0"
+description = "Log-analysis cost benchmark: does OpenTelemetry trace context act as free input compression for AI log analysis?"
+readme = "BENCHMARK_PLAN_v3.md"
+requires-python = ">=3.11"
+dependencies = [
+    "drain3",
+    "scikit-learn",
+    "numpy",
+    "tiktoken",
+    "httpx",
+    "pydantic",
+]
+
+[project.optional-dependencies]
+# Phases 4-5 (LLM/RLM) — needs a running Ollama; not required for the Drain slice.
+llm = ["ollama", "transformers"]
+analysis = ["pandas", "matplotlib", "seaborn", "pyarrow"]
+dev = ["pytest", "pytest-asyncio", "ruff", "mypy"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tokentax"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E731"]
+
+[tool.ruff.lint.per-file-ignores]
+# scripts and tests carry long report-format strings and JSON log fixtures verbatim.
+"scripts/*" = ["E501"]
+"tests/*" = ["E501"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+asyncio_mode = "auto"

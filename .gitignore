@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/raw/
+data/otel_demo/
+otel-demo-src/
+results/runs/*.jsonl
+results/runs/*.parquet
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
