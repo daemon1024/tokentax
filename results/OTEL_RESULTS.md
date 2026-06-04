@@ -94,6 +94,32 @@ COST asymmetry is model-independent and robust). Consistent with the Nezha smoke
 more extreme here because OTel windows are larger. Re-run with `scripts/run_otel_sweep.py` (cloud or
 local) for more windows / a larger model.
 
+## Sonnet in-context (via subscription `claude -p`) — 2026-06-05
+Re-ran in-context on Claude Sonnet (subscription, `scripts/run_claude_sweep.py`; tokens include a
+constant ~30k/call harness overhead that cancels in the plain-vs-structured ratio). Same recoverable
+`productCatalogFailure` window:
+
+| condition | tokens | $ | predicted | correct |
+|---|---|---|---|---|
+| plain | 460,431 | 1.55 | `productcatalogservice` (inferred from body) | ✓ |
+| structured | 679,049 | 2.27 | `product-catalog` (exact, from `service.name`) | ✓ |
+
+Findings:
+- **Sonnet found the fault in BOTH conditions — including the structured window qwen3:8b MISSED.**
+  So the 8B's structured miss was a model limitation, not fundamental; a frontier model handles the
+  verbose OTLP-JSON fine.
+- **Envelope tax = 1.47×** (structured costs ~47% more tokens for the reader) — confirms the thesis
+  on a frontier model.
+- **Structure buys naming precision:** with the `service.name` field present, Sonnet returns the
+  EXACT canonical culprit; plain forces a semantically-correct but differently-named inference. So
+  structure = more tokens AND a more precise answer for in-context.
+
+Cross-model: the in-context envelope tax is consistent (qwen 1.52× / Sonnet 1.47×); the RLM≪in-context
+cost gap (qwen 62–118×) is model-independent by construction. RLM-on-Sonnet (Claude navigating a log
+file with its native Grep/Read tools) is the natural next step.
+
 ## Next
-- More windows + the cloud 480b (when quota resets) for tighter numbers.
+- RLM on Sonnet: write the window to a file, let `claude -p` navigate with native Grep/Read — the
+  most natural RLM; measure its (much lower) token cost vs in-context's full read.
+- More windows + cloud 480b (when quota resets) for tighter numbers + CIs.
 - Harder accuracy task (overlapping faults) so accuracy — not just cost — differentiates methods.
