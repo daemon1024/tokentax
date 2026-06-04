@@ -25,3 +25,34 @@ that the runner won't overwrite. RLM root-cause task on 12 multifault OTel windo
   the 9B's verbosity hurts it on plain.
 - Emerging cross-model picture: tool-calling RLM works on qwen3/qwen3.5/gpt-oss/gemma4; navigation
   QUALITY differs (gpt-oss:20b ≈ gemma4:e4b > qwen3:8b > qwen3.5:9b). deepseek-v2:16b pending.
+
+## FINAL — 120/120 cells, 5 models (RLM root-cause, 12 multifault OTel windows, ~76 min run)
+
+| model | plain acc | struct acc | plain mean_tok | struct mean_tok | struct/plain | plain abort% |
+|---|---|---|---|---|---|---|
+| gpt-oss:20b | 0.92 | 1.00 | 41,671 | 12,066 | 0.29x | 16% |
+| gemma4:e4b | 0.92 | 1.00 | 9,515 | 5,907 | 0.62x | 8% |
+| qwen3:8b | 0.50 | 1.00 | 17,558 | 3,861 | 0.22x | 8% |
+| qwen3.5:9b | 0.50 | 0.92 | 83,312 | 22,605 | 0.27x | 75% |
+| deepseek-v2:16b | — | — | — | — | — | 100% (no tools) |
+
+### Findings
+1. **Structure helps every tool-capable model, on BOTH axes.** Structured RLM costs 0.22–0.62x the
+   tokens of plain (1.6–4.5x cheaper) AND raises accuracy (0.50–0.92 plain -> 0.92–1.00 structured;
+   structured is perfect for 3 of 4). It also collapses the abort rate (plain 8–75% -> structured 0–8%).
+   This generalizes the single-window Sonnet/qwen8b result across 4 model families/sizes.
+2. **Plain navigation is where models diverge.** Without structure, gpt-oss:20b and gemma4:e4b stay
+   accurate (0.92) by navigating content; qwen3:8b and qwen3.5:9b collapse to 0.50. So a better model
+   is more robust to the *absence* of structure — but all still benefit from it.
+3. **More capable != better/cheaper RLM.** qwen3.5:9b is the worst cell: 0.50 plain acc, **83k tokens,
+   11 rounds, 75% abort** — it over-reasons and flails on plain windows, far worse than the smaller
+   qwen3:8b (17k). Verbosity hurts navigation.
+4. **gemma4:e4b is the efficiency winner** (9.5k plain / 5.9k structured, high acc) — and a correction
+   to expectations: gemma4 *supports* the Ollama tools API and does RLM well (gemma3 did not).
+   gpt-oss:20b is the most *robust* navigator (best plain accuracy).
+5. **deepseek-v2:16b cannot do tool-calling RLM** — 24/24 ERROR (Ollama tools API unsupported for this
+   model). Negative result: not every local model can serve as an RLM backend.
+
+### Caveat
+Accuracy is near-saturated by design (recoverable faults), so the discriminating signals are tokens,
+rounds, and abort rate. n=12 windows/model; single fault family per window.
