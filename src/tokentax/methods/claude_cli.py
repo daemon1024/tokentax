@@ -26,11 +26,20 @@ class ClaudeResponse:
         return self.input_tokens + self.output_tokens
 
 
-def claude_call(prompt: str, model: str = "sonnet", timeout: float = 900.0) -> ClaudeResponse:
-    """One headless Claude call via the subscription CLI. Prompt passed on stdin (handles big logs)."""
+def claude_call(
+    prompt: str, model: str = "sonnet", timeout: float = 900.0,
+    allowed_tools: str | None = None,
+) -> ClaudeResponse:
+    """One headless Claude call via the subscription CLI. Prompt passed on stdin (handles big logs).
+
+    allowed_tools: e.g. "Grep,Read,Bash" to let Claude navigate a log file with its native tools
+    (the RLM path) — usage then reflects only what it read, not the whole file.
+    """
+    cmd = ["claude", "-p", "--output-format", "json", "--model", model]
+    if allowed_tools:
+        cmd += ["--allowedTools", allowed_tools, "--permission-mode", "bypassPermissions"]
     proc = subprocess.run(
-        ["claude", "-p", "--output-format", "json", "--model", model],
-        input=prompt, capture_output=True, text=True, timeout=timeout,
+        cmd, input=prompt, capture_output=True, text=True, timeout=timeout,
     )
     if proc.returncode != 0:
         raise RuntimeError(f"claude -p failed (rc={proc.returncode}): {proc.stderr[:300]}")

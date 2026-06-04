@@ -1,0 +1,16 @@
+{
+  "productCatalogFailure@1780513081215181000|plain": {
+    "in": 342697,
+    "out": 1787,
+    "cost": 0.27590580000000003,
+    "pred": "productcatalogservice",
+    "ok": true
+  },
+  "productCatalogFailure@1780513081215181000|structured": {
+    "in": 63274,
+    "out": 190,
+    "cost": 0.060855599999999996,
+    "pred": "product-catalog",
+    "ok": true
+  }
+}

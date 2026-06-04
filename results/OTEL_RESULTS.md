@@ -118,8 +118,28 @@ Cross-model: the in-context envelope tax is consistent (qwen 1.52× / Sonnet 1.4
 cost gap (qwen 62–118×) is model-independent by construction. RLM-on-Sonnet (Claude navigating a log
 file with its native Grep/Read tools) is the natural next step.
 
+## Sonnet RLM (Claude navigates the log file with native Grep/Read) — the full 2×2
+`scripts/run_claude_rlm.py`: write the window to a file, Claude finds the culprit by grepping/reading
+SELECTIVELY. Same `productCatalogFailure` window, all four cells **CORRECT**:
+
+| method | plain tokens | structured tokens |
+|---|---|---|
+| in-context (reads all) | 460,431 | **679,049** ← envelope tax (structured costs MORE) |
+| RLM (navigates) | 342,697 | **63,274** ← compression (structured costs LESS) |
+
+**Structure is a TAX for the reader but COMPRESSION for the navigator** (the thesis title, demonstrated):
+- in-context: structured = **1.47×** plain (reading verbose JSON costs more).
+- RLM: structured = **0.18×** plain (**5.4× cheaper** — grepping `severityText:ERROR` + `service.name` is precise).
+- RLM vs in-context: **0.093× structured (10.7× cheaper)**, 0.74× plain.
+- **Best cell RLM+structured (63k) vs worst in-context+structured (679k) = 10.7×** — same window, same model.
+
+**The decisive detail:** RLM-on-PLAIN read 342k (74% of in-context's full read) — without structure,
+even a frontier navigator can't save much, because there's nothing precise to grep. **Structure is
+what makes navigation cheap** — that IS the contribution.
+
+This is the strongest evidence in the project: real agentic navigation (Claude Code's own tools) on a
+recoverable, native-OTLP dataset, all cells correct, the cost asymmetry crisp.
+
 ## Next
-- RLM on Sonnet: write the window to a file, let `claude -p` navigate with native Grep/Read — the
-  most natural RLM; measure its (much lower) token cost vs in-context's full read.
-- More windows + cloud 480b (when quota resets) for tighter numbers + CIs.
-- Harder accuracy task (overlapping faults) so accuracy — not just cost — differentiates methods.
+- More windows + CIs (each window is ~$2-4 of subscription/cloud); harder accuracy task (overlapping
+  faults) so methods also differ on F1; consolidate into the final write-up.
