@@ -1,11 +1,13 @@
 # Cross-model RLM matrix (autonomous run)
 
-Live results, 72 cells so far. Local Ollama, 12 multifault OTel windows (3 normal + 3 each product-catalog/cart/ad), RLM navigation, root-cause task.
+Live results, 96 cells so far. Local Ollama, 12 multifault OTel windows (3 normal + 3 each product-catalog/cart/ad), RLM navigation, root-cause task.
 
 ## RLM: accuracy, mean tokens, abort rate by (model, condition)
 
 | model | cond | n | acc | mean_tok | mean_rounds | abort% |
 |---|---|---|---|---|---|---|
+| gemma4:e4b | plain | 12 | 0.92 | 9,515 | 4.5 | 8% |
+| gemma4:e4b | structured | 12 | 1.00 | 5,907 | 3.5 | 0% |
 | gpt-oss:20b | plain | 12 | 0.92 | 41,671 | 7.9 | 16% |
 | gpt-oss:20b | structured | 12 | 1.00 | 12,066 | 5.4 | 0% |
 | qwen3.5:9b | plain | 12 | 0.50 | 83,312 | 11.1 | 75% |
