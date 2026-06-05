@@ -87,3 +87,4 @@ Minor: a few structured-normal cells answer "otelcol-contrib" (the collector's i
 the errors_by_service digest) instead of "none" — should bucket otelcol-* out of the digest. gemma4:e4b
 queued. Budget on track to complete.
 ## Matrix-v2 tick — 142/192: gpt-oss 46/48, gemma4:e4b last; pattern holds (structured cheap+correct via digest, plain ERROR/timeout). Budget ~46min left for gemma.
+## Matrix-v2 tick — 173/192: gemma4:e4b 29/48 (last model), runner alive. Pattern holds for gemma too (structured ~1.6k correct, plain ERROR/product-review). Budget tight; may need a short gemma resume.
