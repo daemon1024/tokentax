@@ -79,3 +79,10 @@ navigating a million tokens with no service field to anchor on, while its STRUCT
 not just costlier but INFEASIBLE for the slower model, whereas the structured digest is trivial.
 Restarted gpt-oss:20b + gemma4:e4b with a tighter 150s cell-timeout + fresh budget so the matrix
 completes (their plain cells will mostly record as timeouts = the finding; structured cells are real).
+
+## Matrix-v2 tick — 126/192
+gpt-oss:20b (30/48): structured cells succeed via the digest (~1.3-1.6k tok, fast); plain cells time
+out (ERROR) as expected — confirms plain RLM is infeasible on 1M-token windows for the slower model.
+Minor: a few structured-normal cells answer "otelcol-contrib" (the collector's internal error shows in
+the errors_by_service digest) instead of "none" — should bucket otelcol-* out of the digest. gemma4:e4b
+queued. Budget on track to complete.
