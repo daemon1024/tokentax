@@ -56,3 +56,13 @@ that the runner won't overwrite. RLM root-cause task on 12 multifault OTel windo
 ### Caveat
 Accuracy is near-saturated by design (recoverable faults), so the discriminating signals are tokens,
 rounds, and abort rate. n=12 windows/model; single fault family per window.
+
+## Matrix-v2 tick — 78/192 (qwen3:8b done + qwen3.5:9b partial)
+Corrected cross-model run (true-plain + errors_by_service digest). Pattern stable:
+- structured: ~1.5–1.9k tok, acc 0.80–0.89 (digest localizes the fault cheaply).
+- plain: 9–35k tok, acc 0.25–0.53 (mis-attributes to symptom services product-review/recommendation).
+- tool/plain mean inflated by qwen3.5:9b flailing (one normal window = 87,984 tok — over-navigates
+  with no service field to anchor on).
+- recursive > tool on accuracy in BOTH conditions (0.89 vs 0.80 structured; 0.53 vs 0.25 plain).
+- Minor: a recursive-structured miss on a normal window -> "otelcol-contrib" (the collector's own
+  internal error appears in the digest; should bucket otelcol-* out). gpt-oss:20b + gemma4:e4b pending.
