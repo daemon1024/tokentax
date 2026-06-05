@@ -62,24 +62,32 @@ def main() -> None:
             acc = sum(x["correct"] for x in cs) / len(cs)
             mt = sum(x["total_tok"] for x in cs) // len(cs)
             out.append(f"- **{meth} / {c}**: acc {acc:.2f}, mean {mt:,} tok (n={len(cs)})")
-    out += ["", "## Findings", "",
-            "1. **All 16 cells correct** (recoverable task) — accuracy doesn't separate methods/models "
-            "here; the signal is TOKENS and the root-context ceiling.",
-            "2. **Recursive RLM is cheaper than our tool-RLM on average** (plain 2,962 vs 14,665; "
-            "structured 1,923 vs 5,427). The gap is biggest where tool-RLM flails: qwen3.5:9b plain "
-            "tool=40,706 vs recursive=2,825 (~14x). tool-RLM *accumulates* grep results in a growing "
-            "root transcript re-sent each round; the recursive root stays disciplined and small.",
-            "3. **The root-context ceiling is tiny and ~constant across models** (maxRoot 631–1,045 "
-            "tokens) regardless of window size — the offloaded-context signature, now shown for all 4 "
-            "model families, not just qwen3:8b.",
-            "4. **Structure helps both methods** (tool 14.7k→5.4k; recursive 3.0k→1.9k).",
-            "5. **Honest nuance: recursion was rarely *invoked*** — 7/8 recursive cells did 0 sub-LM "
-            "calls (only qwen3:8b-plain made 1). For this sparse, grep-localizable signal the root "
-            "solved it by examining (overview+grep) without dispatching sub-LMs. So this run mainly "
-            "demonstrates the *offloaded-context discipline* (tiny root), not the sub-LM recursion "
-            "itself — which only pays off when the relevant region is too big to examine directly.",
+    out += ["", "## Findings (corrected — true-plain navigation)", "",
+            "Methodology fix vs the earlier run: `LogREPL` used to prepend `svc=`/severity to EVERY "
+            "grep line regardless of condition, so the RLM's 'plain' secretly contained the service "
+            "name. Now plain lines are the bare message body; structured lines expose svc=/sev=/trace= "
+            "tags + the trace tools. This makes plain genuinely require inferring the culprit.",
+            "",
+            "1. **Structure's real benefit is correct ATTRIBUTION, not token savings.** On true-plain, "
+            "tool-RLM is only **2/4 correct** — qwen3.5:9b and gemma4:e4b answer `recommendation`, a "
+            "service that errors *because it calls* the failing product-catalog (symptom, not cause). "
+            "The explicit `svc=` field (structured) fixes attribution → **4/4**. The earlier 'structure "
+            "= cheaper navigation' was largely the leak.",
+            "2. **Token effect is now method-dependent, not a clean win.** tool-RLM: structure cheaper "
+            "(plain 14.5k → struct 5.7k) because true-plain makes it flail (no svc to grep → many "
+            "rounds; gpt-oss 30.8k, qwen3.5 16.6k). recursive: structure slightly *costlier* (plain "
+            "8.9k → struct 9.6k) because svc=/sev= tags make grep lines longer (maxRoot 700–1,090 plain "
+            "vs 2,600–3,450 structured).",
+            "3. **Recursive RLM is more ROBUST on plain** — 4/4 vs tool-RLM's 2/4. Its prompt directs "
+            "it to infer the culprit from content, and it reads carefully (sometimes a sub-LM call), "
+            "so it resists the recommendation symptom-distractor that fools tool-RLM on plain.",
+            "4. **Recursion still rarely *invoked*** — most recursive cells used 0–1 sub-LM calls; the "
+            "sparse signal is grep-localizable. The mechanism's value (offloaded context, tiny root, "
+            "inputs beyond the context window) is real but this task doesn't force it. qwen3:8b "
+            "recursive is the cost outlier (~19k — over-navigates).",
             "", "_Caveat: single window (~40k tok, 200 records, productCatalog fault), local Ollama, "
-            "one run per cell — directional, not error-barred._"]
+            "one run per cell — directional, not error-barred. Earlier leaky-plain run kept at "
+            "results/runs/rlm_compare_leaky.jsonl for comparison._"]
     DOC.write_text("\n".join(out) + "\n")
     print(f"wrote {DOC} ({len(rows)} cells)")
 

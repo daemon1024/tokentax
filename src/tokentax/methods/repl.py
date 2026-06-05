@@ -19,8 +19,15 @@ class LogREPL:
     def __init__(self, records: list[LogRecord], trace_aware: bool):
         self.records = records
         self.trace_aware = trace_aware
-        # plain line text — trace ids are scrubbed from the body, so grep can't leak them
-        self.lines = [f"[{i}] {r.pod} {r.level or 'LOG'} {r.to_plain()}" for i, r in enumerate(records)]
+        # Condition-aware lines so "plain" is genuinely plain: in the plain (trace-blind) condition
+        # the searchable line is ONLY the message body — no service/severity prefix — so the model
+        # must infer the culprit from content. In the structured condition the OTLP fields
+        # (service.name, severity, trace_id) are exposed as queryable tags, like real structured logs.
+        if trace_aware:
+            self.lines = [f"[{i}] svc={r.pod} sev={r.level or 'LOG'} trace={r.trace_id[:8]} {r.to_plain()}"
+                          for i, r in enumerate(records)]
+        else:
+            self.lines = [f"[{i}] {r.to_plain()}" for i, r in enumerate(records)]
         self._by_trace: dict[str, list[int]] = {}
         for i, r in enumerate(records):
             if r.trace_id:

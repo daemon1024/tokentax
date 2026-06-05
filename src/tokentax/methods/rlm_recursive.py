@@ -53,7 +53,7 @@ def _tools(trace_aware: bool) -> list[dict]:
         return {"type": "function", "function": {
             "name": name, "description": desc,
             "parameters": {"type": "object", "properties": props, "required": req}}}
-    return [
+    tools = [
         fn("overview", "Window metadata: line count, services, severity counts.", {}, []),
         fn("grep", "Search line text (case-insensitive); returns matching lines.",
            {"pattern": {"type": "string"}}, ["pattern"]),
@@ -63,6 +63,14 @@ def _tools(trace_aware: bool) -> list[dict]:
            {"question": {"type": "string"}, "start": {"type": "integer"}, "end": {"type": "integer"}},
            ["question", "start", "end"]),
     ]
+    if trace_aware:  # structured condition exposes the trace-context shortcut
+        tools += [
+            fn("extract_trace_ids", "List trace_ids with error counts + services (most errors first).",
+               {"only_with_errors": {"type": "boolean"}}, []),
+            fn("lines_for_trace", "Return all lines of one trace_id.",
+               {"trace_id": {"type": "string"}}, ["trace_id"]),
+        ]
+    return tools
 
 
 @dataclass
@@ -99,8 +107,13 @@ class RecursiveRLM:
         trace_aware = condition == "structured"
         repl = LogREPL(records, trace_aware=trace_aware)
         n = len(repl.lines)
+        nav = ("This window is STRUCTURED: lines carry svc=/sev=/trace= tags and you also have "
+               "extract_trace_ids(only_with_errors=true) + lines_for_trace — use them to jump to the "
+               "failing service directly." if trace_aware else
+               "This window is PLAIN: lines are raw message bodies only (no service/severity tags, no "
+               "trace tools). You must infer the failing service from the message content.")
         res = RecResult(prediction="unknown")
-        messages = [{"role": "system", "content": _SYS},
+        messages = [{"role": "system", "content": _SYS + "\n" + nav},
                     {"role": "user", "content": f"overview:\n{repl.overview()}\n\nFind the culprit service."}]
         t0 = time.time()
         for rnd in range(1, self.max_rounds + 1):
