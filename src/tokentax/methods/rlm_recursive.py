@@ -150,7 +150,8 @@ class RecursiveRLM:
                         args = {}
                 if name == "llm_query":
                     start = max(0, int(args.get("start", 0)))
-                    end = min(n, int(args.get("end", start)))
+                    # cap the sub-call chunk so it fits the sub context (windows can be ~1M tokens)
+                    end = min(n, start + 200, int(args.get("end", start)))
                     question = str(args.get("question", "which service is failing here?"))
                     chunk = format_window(records[start:end], condition)
                     sub = await self.client.chat(
