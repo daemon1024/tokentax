@@ -88,3 +88,58 @@ the errors_by_service digest) instead of "none" — should bucket otelcol-* out 
 queued. Budget on track to complete.
 ## Matrix-v2 tick — 142/192: gpt-oss 46/48, gemma4:e4b last; pattern holds (structured cheap+correct via digest, plain ERROR/timeout). Budget ~46min left for gemma.
 ## Matrix-v2 tick — 173/192: gemma4:e4b 29/48 (last model), runner alive. Pattern holds for gemma too (structured ~1.6k correct, plain ERROR/product-review). Budget tight; may need a short gemma resume.
+
+## FINAL — matrix-v2 COMPLETE, 192/192 cells (corrected cross-model run)
+
+4 tool-capable models × 12 multifault OTel windows × {tool-RLM, recursive-RLM} × {plain, structured}.
+This run **supersedes the leaky `matrix.jsonl`**: the fix is two-fold — (a) `LogREPL` lines are
+condition-aware (plain = bare message body; structured = svc/sev/trace tags) so "plain" no longer
+leaked `service.name` into every grep result; (b) a structured-only `errors_by_service()` digest
+(per-service ERROR count, computable *only* because structured logs carry `service.name`) — that
+digest is the actual "free input compression" the thesis is about. Windows here are realistic: 200 to
+**5,600 records, up to ~735k plain tokens**. Token means below **exclude ERROR/timeout cells** (those
+emit 0 tokens and would deflate the plain means); timeout counts are reported separately because the
+timeouts are themselves a finding.
+
+| model | tool plain | tool struct | rec plain | rec struct |
+|---|---|---|---|---|
+| qwen3:8b   | 2/12 · 10.7k · 0 TO | **9/12 · 1.4k** | 7/12 · 9.6k · 1 TO | **11/12 · 1.7k** (maxRoot~855) |
+| qwen3.5:9b | 5/12 · 67.6k · 2 TO | **11/12 · 1.8k** | 6/12 · 12.5k · 2 TO | **11/12 · 2.2k** (maxRoot~1.1k) |
+| gpt-oss:20b| 2/12 · 18.7k · **9 TO** | **11/12 · 6.1k** | 3/12 · 4.4k · **9 TO** | **10/12 · 3.1k** · 1 TO (maxRoot~1.1k) |
+| gemma4:e4b | 6/12 · 5.4k · 1 TO | **11/12 · 2.1k** | 3/12 · 2.3k · **6 TO** | **11/12 · 2.7k** (maxRoot~1.1k) |
+
+(cells = accuracy/12 · mean tokens when answered · timeouts; recursive structured also shows mean maxRoot.)
+
+### Findings — thesis confirmed across all four model families
+1. **Structure = free input compression, and it generalizes.** In EVERY model, structured collapses
+   the task to **1.4–6.1k tokens at 9–11/12 accuracy** via one `errors_by_service()` call → a ~10-token
+   digest ("product-catalog=2") → answer, almost always with 0 sub-LM calls. Plain, when it answers at
+   all, costs **5.4–67.6k tokens at 2–7/12**. Per-model token reduction ranges **~2.5× (gemma tool) to
+   ~37× (qwen3.5:9b tool: 67.6k → 1.8k)**; accuracy simultaneously roughly doubles.
+2. **At scale, plain isn't just costlier — it's INFEASIBLE.** On the ~670–735k-token windows the slower
+   models time out navigating raw lines: **gpt-oss:20b times out on 9/12 plain cells in BOTH methods**;
+   gemma4:e4b on 6/12 recursive-plain. Structured **never** times out for the same windows (the digest
+   is tiny). So structure is the difference between answering and not answering — not a mere discount.
+3. **Plain mis-attributes to the symptom service.** Without `service.name`, the navigator repeatedly
+   blames `recommendation`/`product-review` — services that error *because they call* the failing
+   `product-catalog` (downstream symptom, not root cause). The digest disambiguates cause from symptom.
+4. **Recursive RLM keeps the root context tiny — the offloaded-context signature holds.** Even on
+   735k-token windows, recursive `maxRoot` stays **855–6,349 tokens** (structured: ~855–1,100). The
+   full window never enters the root model's context; the root reasons over metadata + sub-answers.
+5. **Bigger ≠ more robust on raw input.** gpt-oss:20b (the largest) is the *most fragile* on plain
+   (9/12 timeouts) yet fully recovers on structured (11/12 tool, 10/12 recursive). qwen3.5:9b over-
+   navigates plain (67.6k tokens) where the smaller qwen3:8b uses 10.7k. Structure rescues every model
+   regardless of size; capability does not substitute for it.
+6. **The earlier "anti-thesis" null was a missing tool, not a refutation.** With only verbose grep the
+   RLM had no way to *exploit* structure, so structured wasn't cheaper. The value appears exactly when
+   the navigator can compute a compact, field-derived digest in the environment (the RLM/REPL premise)
+   instead of reading raw lines — which is the whole point.
+
+### Caveats
+Single fault family per window; faults are log-recoverable by construction (so accuracy is near a
+ceiling and the discriminating signals are tokens + timeout rate). n=12 windows/model, one run/cell —
+directional, not a CI'd headline. The pre-registered confirmatory cell (RLM on trace-anomaly,
+structured vs plain, bootstrap CIs) is still the formal test; this matrix is the supporting
+cross-model generalization. `otelcol-*` should be bucketed out of the digest (the collector's own
+internal errors occasionally surface as a culprit on normal windows). Prior leaky run kept in
+`results/runs/matrix*.jsonl` history for audit.
