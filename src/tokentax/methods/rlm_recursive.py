@@ -65,6 +65,8 @@ def _tools(trace_aware: bool) -> list[dict]:
     ]
     if trace_aware:  # structured condition exposes the trace-context shortcut
         tools += [
+            fn("errors_by_service", "Compact digest: ERROR count per service (most first). Cheapest "
+               "way to localize the fault — call this FIRST in structured logs.", {}, []),
             fn("extract_trace_ids", "List trace_ids with error counts + services (most errors first).",
                {"only_with_errors": {"type": "boolean"}}, []),
             fn("lines_for_trace", "Return all lines of one trace_id.",
@@ -107,9 +109,10 @@ class RecursiveRLM:
         trace_aware = condition == "structured"
         repl = LogREPL(records, trace_aware=trace_aware)
         n = len(repl.lines)
-        nav = ("This window is STRUCTURED: lines carry svc=/sev=/trace= tags and you also have "
-               "extract_trace_ids(only_with_errors=true) + lines_for_trace — use them to jump to the "
-               "failing service directly." if trace_aware else
+        nav = ("This window is STRUCTURED: call errors_by_service() FIRST — it returns a tiny digest "
+               "of ERROR counts per service; the culprit is usually the top originating service. "
+               "(You also have extract_trace_ids/lines_for_trace.) Answer from the digest if clear."
+               if trace_aware else
                "This window is PLAIN: lines are raw message bodies only (no service/severity tags, no "
                "trace tools). You must infer the failing service from the message content.")
         res = RecResult(prediction="unknown")

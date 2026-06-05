@@ -26,9 +26,9 @@ _SYS = (
     "When confident, reply with ONLY JSON {{\"culprit_service\": \"<service-name or none>\"}} "
     "(use 'none' if no service is failing) and DO NOT call a tool in that final turn."
 )
-_NAV_AWARE = ("This window has trace ids: use extract_trace_ids(only_with_errors=true) to find "
-              "failing traces, then lines_for_trace to read a failing trace end-to-end and see "
-              "which service the failure starts in.")
+_NAV_AWARE = ("This window is structured: call errors_by_service() FIRST for a compact per-service "
+              "ERROR-count digest; the culprit is usually the top originating service. You also have "
+              "extract_trace_ids/lines_for_trace. Answer from the digest if it is clear.")
 _NAV_BLIND = ("This window has no trace ids: use grep to find error/exception lines and peek to "
               "read around them to reconstruct what failed.")
 

@@ -94,6 +94,21 @@ class LogREPL:
             return f"no lines for trace {trace_id}"
         return "\n".join(self.lines[i] for i in idxs)
 
+    def errors_by_service(self) -> str:
+        """Compact aggregate: ERROR-record count per service. The structured-log advantage —
+        computed programmatically over the service.name field, returning a ~tiny digest instead of
+        raw lines. Not available in plain (no service field to group by)."""
+        if not self.trace_aware:
+            return "not available: plain logs have no service field to aggregate by."
+        counts: dict[str, int] = {}
+        for r in self.records:
+            if r.is_error:
+                counts[_service_of(r.pod)] = counts.get(_service_of(r.pod), 0) + 1
+        if not counts:
+            return "no errors in window."
+        ranked = sorted(counts.items(), key=lambda kv: -kv[1])
+        return "ERROR counts by service (most first): " + ", ".join(f"{s}={n}" for s, n in ranked)
+
     # --- dispatch for the orchestrator ---
     def call(self, name: str, args: dict) -> str:
         # small models often emit slightly-wrong arg names (e.g. 'search' for 'pattern'),
@@ -118,6 +133,8 @@ class LogREPL:
                     int(arg("limit", "max", default=40)))
             if name == "lines_for_trace":
                 return self.lines_for_trace(str(arg("trace_id", "traceId", "id", "trace")))
+            if name == "errors_by_service":
+                return self.errors_by_service()
         except (ValueError, TypeError, KeyError) as e:
             return f"tool error in {name}: {e}"
         return f"unknown tool: {name}"
@@ -140,6 +157,9 @@ def tool_schemas(trace_aware: bool) -> list[dict]:
     ]
     if trace_aware:
         tools += [
+            fn("errors_by_service",
+               "Compact digest: ERROR count per service (most first). The cheapest way to localize a "
+               "fault in structured logs — call this first.", {}, []),
             fn("extract_trace_ids",
                "List trace_ids with their line/error counts and services (most errors first).",
                {"only_with_errors": {"type": "boolean"}, "limit": {"type": "integer"}}, []),
