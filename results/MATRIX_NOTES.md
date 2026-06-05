@@ -86,3 +86,4 @@ out (ERROR) as expected — confirms plain RLM is infeasible on 1M-token windows
 Minor: a few structured-normal cells answer "otelcol-contrib" (the collector's internal error shows in
 the errors_by_service digest) instead of "none" — should bucket otelcol-* out of the digest. gemma4:e4b
 queued. Budget on track to complete.
+## Matrix-v2 tick — 142/192: gpt-oss 46/48, gemma4:e4b last; pattern holds (structured cheap+correct via digest, plain ERROR/timeout). Budget ~46min left for gemma.
