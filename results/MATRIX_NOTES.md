@@ -71,3 +71,11 @@ Corrected cross-model run (true-plain + errors_by_service digest). Pattern stabl
 Both qwen models done; pattern unchanged from the 78-tick (structured cheap+accurate, plain
 expensive+mis-attributing). gpt-oss:20b running, gemma4:e4b queued (both faster MoE — should finish
 in ~30-45 min). Runner healthy, ~67 min elapsed.
+
+## Matrix-v2 tick — 108/192 + adaptation
+gpt-oss:20b is much slower on the 1M-token windows and its PLAIN cells TIME OUT (240s) — it flails
+navigating a million tokens with no service field to anchor on, while its STRUCTURED cells finish in
+~40s via errors_by_service. This is itself a strong thesis statement: on large inputs, plain RLM is
+not just costlier but INFEASIBLE for the slower model, whereas the structured digest is trivial.
+Restarted gpt-oss:20b + gemma4:e4b with a tighter 150s cell-timeout + fresh budget so the matrix
+completes (their plain cells will mostly record as timeouts = the finding; structured cells are real).
