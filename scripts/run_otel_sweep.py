@@ -39,11 +39,16 @@ def correct(pred: str, truth: str) -> bool:
 async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=str(ROOT / "data/otel_demo/manifest.json"))
+    ap.add_argument("--num-ctx", type=int, default=131072, help="context window (reduce for local)")
+    ap.add_argument("--max-input-tokens", type=int, default=110000, help="in-context chunk size")
     args = ap.parse_args()
     windows = windows_from_manifest(LOGS, args.manifest)
 
     client = OllamaClient()
-    methods = {"in_context": InContextMethod(client), "rlm": RLMMethod(client)}
+    methods = {
+        "in_context": InContextMethod(client, max_input_tokens=args.max_input_tokens, num_ctx=args.num_ctx),
+        "rlm": RLMMethod(client, num_ctx=args.num_ctx),
+    }
     conditions = ["plain", "structured"]
     print(f"model={client.model}  windows={len(windows)}\n")
     print(f"{'method':11s} {'cond':11s} {'window':22s} {'in_tok':>8s} {'out':>5s} {'rounds':>6s} "

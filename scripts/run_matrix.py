@@ -146,7 +146,7 @@ async def rlm_cell(model: str, w, condition: str, timeout: float) -> dict:
         return {"pred": str(r.prediction), "correct": correct(str(r.prediction), truth),
                 "in_tok": r.input_tokens, "out_tok": r.output_tokens, "rounds": r.rlm_rounds,
                 "aborted": r.aborted, "latency_s": round(time.time() - t0, 1), "error": ""}
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return {"pred": "TIMEOUT", "correct": False, "in_tok": 0, "out_tok": 0, "rounds": 0,
                 "aborted": True, "latency_s": round(time.time() - t0, 1), "error": "timeout"}
     except Exception as e:  # noqa: BLE001 - unattended: never die on one cell

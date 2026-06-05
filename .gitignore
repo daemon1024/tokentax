@@ -11,3 +11,6 @@ results/runs/*.parquet
 .ruff_cache/
 .mypy_cache/
 *.egg-info/
+
+# Claude Code session dir
+.claude/
