@@ -1,9 +1,13 @@
 # Corrected cross-model matrix (tool-RLM vs recursive-RLM)
 
-144/192 cells. 4 tool-capable models x 12 multifault OTel windows x 2 methods x 2 conditions. Fixed code: plain truly plain; structured has svc/sev/trace tags + the errors_by_service digest. Cell = accuracy, mean tokens, mean sub-calls, abort%.
+185/192 cells. 4 tool-capable models x 12 multifault OTel windows x 2 methods x 2 conditions. Fixed code: plain truly plain; structured has svc/sev/trace tags + the errors_by_service digest. Cell = accuracy, mean tokens, mean sub-calls, abort%.
 
 | model | method | cond | n | acc | mean_tok | mean_sub | abort% |
 |---|---|---|---|---|---|---|---|
+| gemma4:e4b | recursive | plain | 10 | 0.20 | 1,118 | 0.0 | 50% |
+| gemma4:e4b | recursive | structured | 10 | 0.90 | 2,838 | 0.0 | 0% |
+| gemma4:e4b | tool | plain | 11 | 0.45 | 4,987 | 0.0 | 9% |
+| gemma4:e4b | tool | structured | 10 | 0.90 | 1,972 | 0.0 | 0% |
 | gpt-oss:20b | recursive | plain | 12 | 0.25 | 1,098 | 0.0 | 75% |
 | gpt-oss:20b | recursive | structured | 12 | 0.83 | 2,856 | 0.0 | 8% |
 | gpt-oss:20b | tool | plain | 12 | 0.17 | 4,668 | 0.0 | 75% |
