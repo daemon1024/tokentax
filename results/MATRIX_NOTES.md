@@ -66,3 +66,8 @@ Corrected cross-model run (true-plain + errors_by_service digest). Pattern stabl
 - recursive > tool on accuracy in BOTH conditions (0.89 vs 0.80 structured; 0.53 vs 0.25 plain).
 - Minor: a recursive-structured miss on a normal window -> "otelcol-contrib" (the collector's own
   internal error appears in the digest; should bucket otelcol-* out). gpt-oss:20b + gemma4:e4b pending.
+
+## Matrix-v2 tick — 96/192 (qwen3:8b + qwen3.5:9b both complete)
+Both qwen models done; pattern unchanged from the 78-tick (structured cheap+accurate, plain
+expensive+mis-attributing). gpt-oss:20b running, gemma4:e4b queued (both faster MoE — should finish
+in ~30-45 min). Runner healthy, ~67 min elapsed.
