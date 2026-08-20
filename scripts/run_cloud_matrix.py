@@ -37,6 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from tokentax.methods.anthropic_client import AnthropicClient  # noqa: E402
 from tokentax.methods.ollama_client import OllamaClient  # noqa: E402
 from tokentax.methods.repl import LogREPL  # noqa: E402
 from tokentax.methods.rlm import RLMMethod  # noqa: E402
@@ -61,6 +62,19 @@ DEFAULT_MODELS = [
     "gpt-oss:120b", "qwen3.5:397b", "deepseek-v4-pro:0813", "kimi-k3",
     "glm-5.2", "mistral-large-3:675b", "nemotron-3-super", "gemma4:31b",
 ]
+
+# Claude arm. Routed to AnthropicClient, which drives the SAME LogREPL tools as every other model
+# (unlike claude_cli.py, whose ~30k-token harness and native Grep/Read are a different tool surface
+# and therefore not comparable -- see WITHDRAWAL.md on matched capability).
+# Caveat recorded with the results: Sonnet 5 rejects sampling params, so the temperature=0
+# determinism pin used on the Ollama arms cannot be applied to these cells.
+CLAUDE_MODELS = ("claude-",)
+
+
+def make_client(model: str, timeout: float):
+    if model.startswith(CLAUDE_MODELS):
+        return AnthropicClient(model=model, timeout=timeout, max_retries=2)
+    return OllamaClient(model=model, timeout=timeout, max_retries=2)
 
 START = time.time()
 
@@ -110,7 +124,7 @@ def done_keys() -> set:
 
 async def run_cell(sem, model, cond, w, truth):
     async with sem:
-        client = OllamaClient(model=model, timeout=CELL_TIMEOUT_S, max_retries=2)
+        client = make_client(model, CELL_TIMEOUT_S)
         method = RLMMethod(client, max_rounds=MAX_ROUNDS,
                            max_total_tokens=MAX_TOTAL_TOKENS, num_ctx=NUM_CTX)
         t0 = time.perf_counter()
@@ -229,8 +243,11 @@ async def main():
     ap.add_argument("--smoke", action="store_true", help="2 models x 3 conditions x 3 windows")
     args = ap.parse_args()
 
-    if not os.environ.get("OLLAMA_API_KEY"):
+    models_pre = [m.strip() for m in args.models.split(",") if m.strip()]
+    if any(not m.startswith(CLAUDE_MODELS) for m in models_pre) and not os.environ.get("OLLAMA_API_KEY"):
         sys.exit("OLLAMA_API_KEY not set (environment only). `set -a; . ./.env; set +a`")
+    if any(m.startswith(CLAUDE_MODELS) for m in models_pre) and not os.environ.get("ANTHROPIC_API_KEY"):
+        sys.exit("ANTHROPIC_API_KEY not set (environment only) -- required for the Claude arm.")
     os.environ.setdefault("OLLAMA_HOST", "https://ollama.com")
 
     windows = list(windows_from_manifest(str(LOGS), str(MF)))
