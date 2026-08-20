@@ -118,7 +118,7 @@ async def run_cell(sem, model, cond, w, truth):
         try:
             res = await asyncio.wait_for(
                 method.apredict(w.records, cond, "root_cause"), timeout=CELL_TIMEOUT_S)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             err = "timeout"
         except Exception as e:  # noqa: BLE001 - record, never crash the matrix
             err = f"{type(e).__name__}: {e}"[:200]
