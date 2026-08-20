@@ -61,15 +61,19 @@ class RLMMethod:
     name = "rlm"
 
     def __init__(self, client: OllamaClient, max_rounds: int = 20,
-                 max_total_tokens: int = 250_000, num_ctx: int = 32_768):
+                 max_total_tokens: int = 250_000, num_ctx: int = 32_768,
+                 matched_schemas: bool = False):
         self.client = client
+        # matched_schemas: declare the same tool set in every arm so per-request schema cost is
+        # identical across conditions and only the DATA varies. See repl.tool_schemas.
+        self.matched_schemas = matched_schemas
         self.max_rounds = max_rounds
         self.max_total_tokens = max_total_tokens
         self.num_ctx = num_ctx
 
     async def apredict(self, records: list[LogRecord], condition: str, task: str) -> Result:
         repl = LogREPL(records, condition=condition)
-        tools = tool_schemas(condition=condition)
+        tools = tool_schemas(condition=condition, matched_schemas=self.matched_schemas)
         system = _SYS.format(nav=_nav_for(condition))
         messages: list[dict] = [
             {"role": "system", "content": system},

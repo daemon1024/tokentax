@@ -200,7 +200,8 @@ class LogREPL:
         return f"unknown tool: {name}"
 
 
-def tool_schemas(trace_aware: bool | None = None, condition: str | None = None) -> list[dict]:
+def tool_schemas(trace_aware: bool | None = None, condition: str | None = None,
+                 matched_schemas: bool = False) -> list[dict]:
     """Ollama tool schemas for the available REPL helpers.
 
     Descriptions are deliberately PARALLEL across conditions: each arm's aggregator is described in the
@@ -213,6 +214,16 @@ def tool_schemas(trace_aware: bool | None = None, condition: str | None = None) 
             raise ValueError("pass condition= (or the legacy trace_aware=)")
         condition = "structured" if trace_aware else "plain"
     has_fields = condition in ("structured", "structured_no_trace")
+
+    # matched_schemas: declare the SAME tool set in every arm, so the per-request schema cost is
+    # identical and the only thing that varies is the DATA. Without this, `structured` carries two
+    # extra tool definitions (459 vs 320 tok/request) -- ~139 tok x ~3 rounds ~= 417 tok, which
+    # accounted for essentially all of the "trace_id costs 20% more" effect first measured. Tools
+    # whose backing field is absent already return an explicit "not available" string, so declaring
+    # them everywhere is safe.
+    if matched_schemas:
+        has_fields = True
+        condition = "structured"
 
     def fn(name, desc, props, required):
         return {"type": "function", "function": {

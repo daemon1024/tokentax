@@ -46,7 +46,10 @@ from tokentax.otel_loader import windows_from_manifest  # noqa: E402
 LOGS = ROOT / "data/otel_demo/logs.jsonl"
 MF = ROOT / "data/otel_demo/manifest_multifault.json"
 OUT = ROOT / "results/runs/cloud_matrix.jsonl"
+OUT_MATCHED = ROOT / "results/runs/cloud_matrix_matched.jsonl"
 DOC = ROOT / "results/CLOUD_MATRIX.md"
+DOC_MATCHED = ROOT / "results/CLOUD_MATRIX_MATCHED.md"
+MATCHED_SCHEMAS = False
 
 ORIGIN = {"productCatalogFailure": "product-catalog", "cartFailure": "cart", "adFailure": "ad"}
 CONDITIONS = ("plain", "structured_no_trace", "structured")
@@ -126,7 +129,8 @@ async def run_cell(sem, model, cond, w, truth):
     async with sem:
         client = make_client(model, CELL_TIMEOUT_S)
         method = RLMMethod(client, max_rounds=MAX_ROUNDS,
-                           max_total_tokens=MAX_TOTAL_TOKENS, num_ctx=NUM_CTX)
+                           max_total_tokens=MAX_TOTAL_TOKENS, num_ctx=NUM_CTX,
+                           matched_schemas=MATCHED_SCHEMAS)
         t0 = time.perf_counter()
         err, res = "", None
         try:
@@ -241,7 +245,14 @@ async def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", default=",".join(DEFAULT_MODELS))
     ap.add_argument("--smoke", action="store_true", help="2 models x 3 conditions x 3 windows")
+    ap.add_argument("--matched-schemas", action="store_true",
+                    help="declare the same tool set in every arm (isolates DATA from tool-surface "
+                         "cost); writes to a separate output file")
     args = ap.parse_args()
+    if args.matched_schemas:  # config change => new output file, never mixed with the gated run
+        globals()["MATCHED_SCHEMAS"] = True
+        globals()["OUT"] = OUT_MATCHED
+        globals()["DOC"] = DOC_MATCHED
 
     models_pre = [m.strip() for m in args.models.split(",") if m.strip()]
     if any(not m.startswith(CLAUDE_MODELS) for m in models_pre) and not os.environ.get("OLLAMA_API_KEY"):

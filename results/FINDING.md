@@ -1,3 +1,39 @@
+> [!CAUTION]
+> **PARTIALLY RETRACTED (2026-08-20, same day).** Two follow-up runs invalidated the token results below.
+>
+> **1. The token contrasts are inside the noise floor.** This document reported paired bootstrap CIs
+> from a single run per cell. Re-running cells whose tool schema is *byte-identical* shows the models
+> are not deterministic despite `temperature=0` and a fixed seed:
+>
+> | condition | median Δ across runs | mean \|Δ\| | identical cells |
+> |---|---|---|---|
+> | plain | +680 | **39,758** | 0/48 |
+> | structured_no_trace | +288 | **8,347** | — |
+> | structured | +13 | **12,112** | 3/47 |
+>
+> Every within-navigation effect below is smaller than this. The CIs measured only *within-run*
+> pairing and never observed run-to-run variance. **"Structure saves tokens" is not established** —
+> it flips sign depending on tool-schema gating and is inside the noise either way.
+>
+> **2. The `trace_id` penalty was mostly my own harness.** Tool schemas are re-sent every round and
+> differed per arm — 267 / 320 / **459** tokens for plain / no_trace / structured. That is +139 tok per
+> request × ~3 rounds ≈ 417, against a reported penalty of 514. Re-running with schemas matched across
+> all arms (`--matched-schemas`, `runs/cloud_matrix_matched.jsonl`) cut it to **−182**.
+>
+> **3. The task cannot test the hypothesis at all.** "Name the culprit service" is answered by one
+> aggregate (ERROR count per service, take the top). Correlating a request across services is never
+> required, so `trace_id` is never on the critical path — trace tools were called in **17%** of
+> structured cells, 18 calls out of 313. A null was guaranteed by construction, independent of every
+> defect above.
+>
+> **What replaces it — see `NAVIGATION.md`.** The comparison that was missing from this document is
+> RLM vs reading the whole window, and it is decisive: **1,127,422 vs 3,985 median tokens (331×),
+> accuracy 2/6 vs 6/6.** That gap is orders of magnitude outside the noise floor. The compression comes
+> from *navigating instead of reading* — not from trace structure.
+>
+> Sections 3, 4 and 5 below (plain fails by exhaustion; direction inconsistent across models; means
+> mislead and the tail is the story) are unaffected and still stand.
+
 # The corrected result: structure buys accuracy, not tokens — and `trace_id` costs tokens
 
 **Run:** 8 frontier models (Ollama Cloud) × 3 arms × 12 OTel-Demo windows = **288 cells, 0 failures**.
