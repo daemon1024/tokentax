@@ -1,3 +1,27 @@
+> [!CAUTION]
+> **CORRECTION (2026-08-20): finding #1 and finding #4 below are wrong, and the repo now contains the
+> control that proves it.**
+>
+> This document credits the structured arm's win to "free input compression". It is instead produced by
+> `errors_by_service()` — a ranked per-service ERROR-count digest added to the **structured arm only**,
+> which never reads `trace_id`.
+>
+> The immediately preceding run — same code, same windows, same models, **matched tools, no digest** —
+> is preserved at `results/runs/rlm_compare_matched_tools.jsonl` (formerly misfiled as
+> `rlm_compare_leaky_v2.jsonl`; it is *not* leaky). Comparing the two runs isolates a single variable:
+>
+> | run | tool/plain | tool/struct | rec/plain | rec/struct |
+> |---|---|---|---|---|
+> | matched tools, no digest | 14,495 · 2/4 | 5,720 · 4/4 | **8,910 · 4/4** | **9,646 · 4/4** |
+> | digest added to structured only | 14,495 · 2/4 | 2,755 · 4/4 | **8,910 · 4/4** | **1,986 · 4/4** |
+>
+> The plain columns are **bit-identical**. Only the structured cells move. With tools matched, structured
+> was *more expensive* than plain (9,646 vs 8,910) at identical 4/4 accuracy — i.e. the honest measurement
+> available at the time was a **null**, and finding #4's claim that the earlier null "was a missing tool,
+> not a refutation" inverts what happened.
+>
+> **Do not cite the findings below.** See `WITHDRAWAL.md`.
+
 # tool-RLM vs recursive-RLM — cross-model, structured vs unstructured
 
 One productCatalogFailure window (capped ~200 records / ~40k tokens), root-cause task, local Ollama. Cell = total tokens + correct(✓)/wrong(✗)/error(ERR); recursive also shows sub-call count and max single root-prompt (the offloaded-context signature). truth=product-catalog.

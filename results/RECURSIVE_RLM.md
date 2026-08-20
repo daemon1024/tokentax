@@ -1,3 +1,25 @@
+> [!CAUTION]
+> **PARTIALLY WITHDRAWN (2026-08-20).**
+>
+> **What still stands:** the mechanism claim. `maxRootPrompt ≈ 830–873` tokens against a ~40k-token
+> window is a real demonstration that the root model never holds the window, and finding #2 ("for a
+> sparse signal, recursion does not save tokens over navigation") is honest and was later borne out.
+>
+> **What does not stand:** the plain-vs-structured contrast in the table. These cells predate the
+> `bc1db3d` leak fix, so the "plain" rows were still being fed lines tagged with `service.name`.
+>
+> **Two implementation defects found on re-audit, both of which weaken the "faithful recursion" claim:**
+> * `rlm_recursive.py:154` — `end = min(n, start + 200, int(args.get("end", start)))`. When the model
+>   omits `end`, it defaults to `start`, so the slice is `records[start:start]` — **empty**. The sub-LM
+>   is then asked to answer about an empty chunk. The 200-line cap also silently overrides any larger
+>   range `plan_chunks` just advertised.
+> * In the 192-cell successor run, **89 of 96 recursive cells made zero sub-calls** (70 of 77 among
+>   non-error cells). "Recursive RLM" was, in the overwhelming majority of measured cells, the tool
+>   navigator with extra tools — not recursion. Any cross-method claim built on that distinction is
+>   unsupported.
+>
+> See `WITHDRAWAL.md`.
+
 # Faithful RLM (recursive sub-LM) vs grep-navigator vs in-context
 
 Implements the actual mechanism from arXiv:2512.24601 (`src/tokentax/methods/rlm_recursive.py`): the

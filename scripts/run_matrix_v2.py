@@ -78,6 +78,20 @@ def commit(msg):
     subprocess.run(["git", "-C", str(ROOT), "commit", "-q", "-m", msg, "-m", co], capture_output=True)
 
 
+# Prepended to every regenerated copy of DOC so the 2026-08-20 correction survives a re-run.
+# Do not remove without reading WITHDRAWAL.md: the structured arm's advantage in this matrix is
+# produced by the structured-only errors_by_service() digest, which reproduces the labelling
+# function (zero-LLM argmax over it scores 11/12 on these same windows).
+BANNER = (
+    "> [!CAUTION]\n"
+    "> **CORRECTION (2026-08-20): the headline of this document does not hold.** The structured arm's\n"
+    "> advantage is produced by the structured-only `errors_by_service()` digest, which never reads\n"
+    "> `trace_id` and reproduces the labelling function — zero-LLM argmax over it scores 11/12 on these\n"
+    "> same windows. Plain-arm timeouts are additionally recorded at `total_tok=0`, censoring its cost.\n"
+    "> **Do not cite these numbers.** See `WITHDRAWAL.md`."
+)
+
+
 def regen(models):
     rows = [json.loads(x) for x in OUT.read_text().splitlines() if x.strip()] if OUT.exists() else []
     agg = defaultdict(lambda: {"n": 0, "ok": 0, "tok": 0, "sub": 0, "ab": 0})
@@ -88,7 +102,8 @@ def regen(models):
         a["tok"] += r["total_tok"]
         a["sub"] += r.get("subcalls", 0)
         a["ab"] += int(r.get("aborted", False))
-    out = ["# Corrected cross-model matrix (tool-RLM vs recursive-RLM)", "",
+    out = [BANNER, "",
+           "# Corrected cross-model matrix (tool-RLM vs recursive-RLM)", "",
            f"{len(rows)}/192 cells. 4 tool-capable models x 12 multifault OTel windows x 2 methods x "
            "2 conditions. Fixed code: plain truly plain; structured has svc/sev/trace tags + the "
            "errors_by_service digest. Cell = accuracy, mean tokens, mean sub-calls, abort%.", "",

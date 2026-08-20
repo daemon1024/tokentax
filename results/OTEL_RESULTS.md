@@ -1,3 +1,19 @@
+> [!IMPORTANT]
+> **SCOPE NOTE (2026-08-20).** The recoverability verdict below is correct, but it is a statement about
+> a dataset this project *constructed*, not a property of the OpenTelemetry Demo.
+>
+> The origin ERROR log exists because `infra/otel-demo/` patches a hand-authored `logger.error` into the
+> fault-origin service (the patch comment says "so the fault is log-recoverable"). `infra/otel-demo/README.md`
+> states the labels are "NOT from a marker in the log" — that is wrong; the patch **is** the marker.
+>
+> Consequence: on these windows the culprit is the only erroring service in 9 of 9 anomalous windows, so
+> `argmax(ERROR count by service)` scores 11/12 with no model involved. The dataset is recoverable *by
+> construction*, which makes it a valid **control** — a known-recoverable signal for measuring cost — and
+> an invalid basis for any accuracy claim. The comparison against Nezha below remains sound and is the
+> genuinely interesting result: unpatched, real micro-fault datasets are largely **not** log-recoverable.
+>
+> See `WITHDRAWAL.md`.
+
 # OTel Demo — log-recoverable dataset (the accuracy axis, finally)
 
 Native-OTLP capture from the patched OpenTelemetry Demo v2.2.0. Unlike Nezha, the fault is

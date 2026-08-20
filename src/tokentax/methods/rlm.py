@@ -26,11 +26,25 @@ _SYS = (
     "When confident, reply with ONLY JSON {{\"culprit_service\": \"<service-name or none>\"}} "
     "(use 'none' if no service is failing) and DO NOT call a tool in that final turn."
 )
-_NAV_AWARE = ("This window is structured: call errors_by_service() FIRST for a compact per-service "
-              "ERROR-count digest; the culprit is usually the top originating service. You also have "
-              "extract_trace_ids/lines_for_trace. Answer from the digest if it is clear.")
-_NAV_BLIND = ("This window has no trace ids: use grep to find error/exception lines and peek to "
-              "read around them to reconstruct what failed.")
+# Navigation hints are PARALLEL across conditions by design. The 2026-06 prompts told the structured
+# arm to call its digest first and "answer from the digest if it is clear", and told the plain arm only
+# to grep -- prompt-level steering stacked on top of the tool-level advantage. See WITHDRAWAL.md.
+_NAV_COMMON = ("Call {digest}() FIRST for a compact ranked ERROR digest, and answer from it if it is "
+               "clear. Use grep/peek to read around specific lines when it is not.")
+_NAV_EXTRA = {
+    "plain": "",
+    "structured_no_trace": "",
+    "structured": " You also have extract_trace_ids/lines_for_trace to group lines by request.",
+}
+_DIGEST = {
+    "plain": "errors_by_cluster",
+    "structured_no_trace": "errors_by_service",
+    "structured": "errors_by_service",
+}
+
+
+def _nav_for(condition: str) -> str:
+    return _NAV_COMMON.format(digest=_DIGEST[condition]) + _NAV_EXTRA[condition]
 
 
 def _parse_final(content: str) -> str | None:
@@ -54,10 +68,9 @@ class RLMMethod:
         self.num_ctx = num_ctx
 
     async def apredict(self, records: list[LogRecord], condition: str, task: str) -> Result:
-        trace_aware = condition == "structured"
-        repl = LogREPL(records, trace_aware=trace_aware)
-        tools = tool_schemas(trace_aware)
-        system = _SYS.format(nav=_NAV_AWARE if trace_aware else _NAV_BLIND)
+        repl = LogREPL(records, condition=condition)
+        tools = tool_schemas(condition=condition)
+        system = _SYS.format(nav=_nav_for(condition))
         messages: list[dict] = [
             {"role": "system", "content": system},
             {"role": "user", "content": "Here is the window overview:\n" + repl.overview()
@@ -65,6 +78,7 @@ class RLMMethod:
         ]
 
         in_tok = out_tok = rounds = 0
+        gpu_s = 0.0
         trace: list[dict] = []
         prediction, aborted, reason = "unknown", False, ""
         t0 = time.perf_counter()
@@ -72,6 +86,7 @@ class RLMMethod:
             resp = await self.client.chat(messages, tools=tools, think=False, num_ctx=self.num_ctx)
             in_tok += resp.prompt_eval_count
             out_tok += resp.eval_count
+            gpu_s += resp.gpu_seconds  # 0.0 on cloud (durations come back null); real on local
 
             if resp.tool_calls:
                 messages.append({"role": "assistant", "content": resp.content or "",
@@ -112,7 +127,7 @@ class RLMMethod:
             input_tokens=in_tok,
             output_tokens=out_tok,
             latency_ms=(time.perf_counter() - t0) * 1000,
-            gpu_seconds=0.0,
+            gpu_seconds=gpu_s,
             rlm_rounds=rounds,
             aborted=aborted,
             abort_reason=reason,

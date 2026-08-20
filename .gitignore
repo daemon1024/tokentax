@@ -14,3 +14,4 @@ results/runs/*.parquet
 
 # Claude Code session dir
 .claude/
+.DS_Store

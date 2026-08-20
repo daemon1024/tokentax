@@ -1,44 +1,79 @@
 # CLAUDE.md — tokentax
 
-**Goal.** Benchmark whether OpenTelemetry trace context is "free input compression" for AI log
-analysis: a trace-aware Recursive Language Model that greps `trace_id` and reads per-trace slices
-should reach a conclusion in far fewer tokens than reading the whole window, at equal-or-better
-accuracy. `BENCHMARK_PLAN_v3.md` is the source of truth (supersedes `BENCHMARK_PLAN.md` v2).
+> **Read `WITHDRAWAL.md` first.** The pre-registered claim was withdrawn on 2026-08-20; the headline
+> result in `results/` is an artifact of a tool given to one arm. This file describes the repo as it
+> actually is, not as `BENCHMARK_PLAN_v3.md` planned it.
 
-**Status (2026-06-03).** Source decided + validated on real bytes. Building the infra-free slice
-(Phase 0 + 1 + 3 Drain + 6 scoring); LLM methods (Phases 4-5) gated on a running Ollama.
+**Question.** Does OpenTelemetry trace context act as free input compression for AI log analysis — can a
+trace-aware navigator reach the same conclusion for materially fewer tokens than reading the whole window?
+**Status: open.** The only tool-matched measurement in the repo
+(`results/runs/rlm_compare_matched_tools.jsonl`) is a *null* — structured cost slightly more than plain at
+equal accuracy. The question has never faced a clean test.
 
-## Decision trail (read in order)
-`REVIEW.md` → `DATA_SOURCE_B.md` → `SOURCE_DECISION.md` → `GATE_RESULTS.md` → `BENCHMARK_PLAN_v3.md`.
+## Status (2026-08-20)
 
-## Methods (3) & the model rule
-Drain (0 tokens), in-context LLM, RLM (trace-aware). **`model` is a property of a RUN, not a method** —
-every method on a cross-method facet shares one `OLLAMA_MODEL` (no 7B-vs-27B confound).
+Dormant since 2026-06-05 (48 commits). Being restarted. `make test` passes (20 tests).
+`make data` and `make drain` **crash** — they target `data/raw/Nezha/`, which is not on disk.
+`import tokentax` fails outside pytest; the package was never installed into `.venv`
+(pytest's `pythonpath=["src"]` is what makes tests work).
 
-## Data — Nezha, BOTH systems, one pipeline (no infra)
-`data/raw/Nezha/` (sparse git clone). Train Ticket (`2023-01-29/30`) + Online Boutique (`2022-08-22/23`).
-Log CSV per minute = one window; `TraceID`/`SpanID` columns at 100% coverage. The `Log` field is a JSON
-envelope — Train Ticket inner is plain text, Online Boutique inner is `{"message","severity"}` JSON.
-Three conditions from one source: **plain** (body, ids scrubbed) / **structured** (OTLP-JSON +ids) /
-**structured-no-trace** (OTLP, ids dropped). LogHub and the OTel Demo are NOT used (dropped / optional).
+## What the data actually is
 
-## Tasks (2)
-1. Root-cause / culprit-service localization (multi-class, 38 log-visible episodes / 12 services, bootstrap CIs).
-2. Trace-anomaly localization (binary, 31,142 balanced (window,trace) pairs; label = trace touches `inject_pod`).
-Window-binary-anomaly is demoted (ERROR logs pervade normal windows — volume carries no fault signal).
+`data/otel_demo/` — 391 MB, **gitignored, one machine, no backup, not reproducible**. Captured from a
+locally patched OpenTelemetry Demo v2.2.0 via `infra/otel-demo/`. Manifests key windows by absolute
+wall-clock nanoseconds.
 
-## Metrics
-`total_tokens = Σ(prompt_eval_count + eval_count)` over every call (RLM: root + subs + tool feedback).
-`gpu_seconds = Σ(prompt_eval_duration + eval_duration)/1e9` (LOCAL only). `temperature=0`, fixed `seed`,
-explicit `num_ctx`. Headline x = `cost_per_correct = Σtotal_tokens / count(correct)`.
+**Nezha is not present.** The project pivoted to the OTel Demo on ~2026-06-03 and no document records the
+decision — `REDESIGN.md` recommends injection onto *Nezha* traces; the code went elsewhere. Treat
+`BENCHMARK_PLAN_v3.md`, `SOURCE_DECISION.md` and `DATA_SOURCE_B.md` as history, not as the current plan.
+
+**The labels are constructed.** `infra/otel-demo/` patches a hand-authored `logger.error` into each
+fault-origin service, so the culprit is the only erroring service in 9 of 9 anomalous windows. This makes
+the dataset a legitimate **control** (a known-recoverable signal for measuring cost) and an illegitimate
+basis for accuracy claims. `infra/otel-demo/README.md`'s claim that labels are "NOT from a marker in the
+log" is wrong.
+
+## Decision trail (historical, in order)
+
+`REVIEW.md` → `DATA_SOURCE_B.md` → `SOURCE_DECISION.md` → `GATE_RESULTS.md` → `BENCHMARK_PLAN_v3.md` →
+`REDESIGN.md` → **`WITHDRAWAL.md` (current)**.
+
+## What survives
+
+1. **Envelope tax** — OTLP-JSON costs 1.47–2.19× plain tokens to read the same content.
+2. **Compression handle** — fault signal is 0.02–0.34% of a ~1.07M-token window.
+3. **Recoverability finding** (`results/RCA_RECOVERABILITY.md`) — the best result here. In Nezha the
+   injected service emits any ERROR in 12/38 windows and is named in the failure text in 2/38. Real
+   micro-fault datasets largely do not encode their labels in logs.
+4. **Negative engineering results** — `deepseek-v2:16b` cannot drive the Ollama tools API; format alone
+   does not rescue an 8B on a 70k-token window.
+
+## What does not survive
+
+Every plain-vs-structured token and accuracy claim in `results/MATRIX_*.md`, `RLM_COMPARISON.md`, and the
+condition contrast in `RECURSIVE_RLM.md`. All carry correction banners. `gpu_seconds` is hardcoded to `0.0`
+in both LLM methods and was never measured.
+
+## Hard rules for any successor experiment
+
+- **Matched tool capability across arms is a precondition, not a nicety.** If one arm gets an aggregator,
+  every arm gets an equally powerful one. Adding a task-specific tool to one arm measures the tool.
+- **No mid-run parameter changes.** Timeouts, round caps and budgets are fixed before the first cell.
+  If a run must be restarted with different settings, it is a *new* run with a new output file.
+- **Failures are data.** A timeout is a censored observation, never `total_tok=0` folded into a mean.
+  Report the failure rate separately and state which cells the means cover.
+- **Pre-register, then run.** The metric you commit to is the metric you compute. `cost_per_correct` must
+  exist in code before it appears in a document.
+- **Vary one thing.** `structured` currently changes service name, severity, `trace_id` *and* the tool set
+  at once. `structured_no_trace` (`nezha.py:270`) is built, tested, and never run — it isolates the actual
+  hypothesis.
 
 ## Conventions
-Package `src/tokentax/`. Run via venv: `.venv/bin/python`. `make data` (gates), `make drain` (baseline),
-`make test`, `make lint`. **`Method.predict(window, task) -> Result`** is the non-negotiable contract
-(`Result`: prediction, input/output/total tokens, latency_ms, gpu_seconds, rlm_rounds, aborted, raw_trace).
-**API key from the environment only**, never code/args. tiktoken `cl100k_base` is a token PROXY; a
-Qwen-tokenizer cross-check is a Phase-4 step.
 
-## Pre-registered decision rule
-Token effect size (structured-RLM ≤ X% of in-context-plain cost_per_correct) + F1 non-inferiority (≥ −δ via
-bootstrap CI). Primary confirmatory cell = RLM on trace-anomaly, structured vs plain.
+Package `src/tokentax/`. Run via venv: `.venv/bin/python`. `make test`, `make lint`.
+`Method.predict(window, task) -> Result` is the *intended* contract but is currently dead code — nothing
+subclasses it, and four methods return three result types. Fix or delete it before adding a fifth.
+**API keys from the environment only**, never in code or args. tiktoken `cl100k_base` is a token PROXY;
+a real-tokenizer cross-check remains outstanding.
+
+**Provenance is not optional.** There is no git remote. Push before doing anything else.

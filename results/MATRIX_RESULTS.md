@@ -1,3 +1,15 @@
+> [!CAUTION]
+> **SUPERSEDED AND WITHDRAWN (2026-08-20).** This is the pre-fix ("leaky") 120-cell run.
+>
+> At the time these cells ran, `LogREPL` emitted the same tagged lines in both conditions, so the
+> **"plain" arm still leaked `service.name`** into every grep result — the condition contrast is invalid.
+> That leak was found and fixed in `bc1db3d`. The header below ("Live results, 120 cells so far") is
+> stale; the run finished at 120/120 and was then superseded twice.
+>
+> The successor run (`MATRIX_RESULTS_V2.md`) fixes the leak but introduces a **different** fatal
+> confound — a structured-only `errors_by_service()` digest that reproduces the labelling function.
+> Neither run supports the structure-is-cheaper claim. **Do not cite either.** See `WITHDRAWAL.md`.
+
 # Cross-model RLM matrix (autonomous run)
 
 Live results, 120 cells so far. Local Ollama, 12 multifault OTel windows (3 normal + 3 each product-catalog/cart/ad), RLM navigation, root-cause task.
