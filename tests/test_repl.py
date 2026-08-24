@@ -48,3 +48,52 @@ def test_dispatch():
     repl = LogREPL(_records(), trace_aware=True)
     assert "matches" in repl.call("grep", {"pattern": "ok"})
     assert "unknown tool" in repl.call("nope", {})
+
+
+def test_digests_scope_to_a_trace():
+    repl = LogREPL(_records(), trace_aware=True)
+    assert "ts-basic-service-cc-dd=1" in repl.errors_by_service()
+    scoped = repl.errors_by_service(trace_id="T1")
+    assert "within trace T1" in scoped and "ts-basic-service-cc-dd=1" in scoped
+    # T2's only non-INFO line is a WARN, so a scoped digest must report zero errors,
+    # never silently fall back to the whole window.
+    assert "no errors" in repl.errors_by_service(trace_id="T2")
+    assert "no errors" in repl.errors_by_cluster(trace_id="T2")
+    assert "NullPointerException" in repl.errors_by_cluster(trace_id="T1")
+
+
+def test_scope_errors_are_explicit_not_silent():
+    repl = LogREPL(_records(), trace_aware=True)
+    assert "no lines for trace" in repl.errors_by_service(trace_id="NOPE")
+    assert "no lines for trace" in repl.errors_by_cluster(trace_id="NOPE")
+    blind = LogREPL(_records(), condition="structured_no_trace")
+    assert "not available in this condition" in blind.errors_by_service(trace_id="T1")
+    # ... but an unscoped call in that arm still works.
+    assert "ts-basic-service-cc-dd=1" in blind.errors_by_service()
+
+
+def test_unscoped_cluster_cache_survives_a_scoped_call():
+    repl = LogREPL(_records(), trace_aware=True)
+    full = repl.errors_by_cluster()
+    repl.errors_by_cluster(trace_id="T1")
+    assert repl.errors_by_cluster() == full
+
+
+def test_scope_param_declared_only_where_trace_ids_exist():
+    def props(schemas, name):
+        return next(t["function"]["parameters"]["properties"]
+                    for t in schemas if t["function"]["name"] == name)
+    assert "trace_id" in props(tool_schemas(condition="structured"), "errors_by_service")
+    assert "trace_id" in props(tool_schemas(condition="structured"), "errors_by_cluster")
+    assert "trace_id" not in props(tool_schemas(condition="structured_no_trace"), "errors_by_service")
+    assert "trace_id" not in props(tool_schemas(condition="plain"), "errors_by_cluster")
+    # matched_schemas forces every arm onto the identical (structured) tool set
+    assert (tool_schemas(condition="plain", matched_schemas=True)
+            == tool_schemas(condition="structured", matched_schemas=True))
+
+
+def test_dispatch_passes_the_scope_through():
+    repl = LogREPL(_records(), trace_aware=True)
+    assert "within trace T1" in repl.call("errors_by_service", {"trace_id": "T1"})
+    assert "within trace T1" in repl.call("errors_by_cluster", {"traceId": "T1"})
+    assert "within trace" not in repl.call("errors_by_service", {})

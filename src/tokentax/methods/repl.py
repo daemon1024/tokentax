@@ -4,7 +4,8 @@ THREE conditions, with MATCHED aggregation power (see WITHDRAWAL.md for why this
 
   plain                body only. Tools: overview, grep, peek, errors_by_cluster
   structured_no_trace  + service.name + severity. Tools: the above + errors_by_service
-  structured           + trace_id.    Tools: the above + extract_trace_ids, lines_for_trace
+  structured           + trace_id.    Tools: the above + extract_trace_ids, lines_for_trace,
+                                      and a `trace_id=` scope on BOTH digests
 
 The 2026-06 runs gave an ERROR-count digest to the structured arm ONLY, so the measured "structure
 advantage" was a tool advantage. Every condition now gets the best aggregator computable from the data
@@ -102,43 +103,79 @@ class LogREPL:
         end = min(len(self.lines), end)
         return "\n".join(self.lines[start:end]) or "(empty range)"
 
-    def errors_by_cluster(self, limit: int = 10) -> str:
+    def _scope(self, trace_id: str = "") -> tuple[list[LogRecord], str, str | None]:
+        """Resolve which records a digest aggregates over.
+
+        Returns (records, label, error). `error` is a user-facing string whenever the requested scope
+        cannot be honoured; callers MUST return it rather than falling back to the whole window, because
+        a silently-unscoped digest answers a different question than the one asked.
+        """
+        tid = str(trace_id or "").strip()
+        if not tid:
+            return self.records, "", None
+        if not self.trace_aware:
+            return [], "", "trace ids not available in this condition; call without trace_id."
+        idxs = self._by_trace.get(tid)
+        if not idxs:
+            return [], "", f"no lines for trace {tid}"
+        return ([self.records[i] for i in idxs],
+                f" within trace {tid[:8]} ({len(idxs)} lines)", None)
+
+    def errors_by_cluster(self, limit: int = 10, trace_id: str = "") -> str:
         """Compact digest: ERROR lines grouped into Drain message-templates, ranked by count.
 
         The plain arm's matched-power aggregator — needs no fields, only message bodies, so it is
         available in EVERY condition. This is the control that makes `errors_by_service` interpretable:
         if structure adds nothing over text clustering, the two digests localise equally well.
+
+        `trace_id` narrows the digest to one request. Note that Drain templates are corpus-dependent:
+        mined over a handful of lines they stay near-verbatim, so a scoped digest is NOT a subset of the
+        unscoped one and the two are not directly comparable template-for-template.
         """
-        if self._cluster_cache is not None:
+        records, label, err = self._scope(trace_id)
+        if err:
+            return err
+        cacheable = not label
+        if cacheable and self._cluster_cache is not None:
             return self._cluster_cache
         miner = _make_miner()
         counts: dict[str, int] = {}
-        for r in self.records:
+        for r in records:
             if r.is_error:
                 res = miner.add_log_message(_normalize(r.to_plain()))
                 tmpl = res["template_mined"]
                 counts[tmpl] = counts.get(tmpl, 0) + 1
         if not counts:
-            self._cluster_cache = "no errors in window."
-            return self._cluster_cache
-        ranked = sorted(counts.items(), key=lambda kv: -kv[1])[:limit]
-        body = "\n".join(f"{n}x  {t[:160]}" for t, n in ranked)
-        self._cluster_cache = f"ERROR message-templates (most first, {len(counts)} distinct):\n{body}"
-        return self._cluster_cache
+            out = f"no errors{label or ' in window'}."
+        else:
+            ranked = sorted(counts.items(), key=lambda kv: -kv[1])[:limit]
+            body = "\n".join(f"{n}x  {t[:160]}" for t, n in ranked)
+            out = f"ERROR message-templates{label} (most first, {len(counts)} distinct):\n{body}"
+        if cacheable:
+            self._cluster_cache = out
+        return out
 
     # --- needs service.name (structured + structured_no_trace) ---
-    def errors_by_service(self) -> str:
-        """Compact digest: ERROR-record count per service, ranked. Requires the service.name field."""
+    def errors_by_service(self, trace_id: str = "") -> str:
+        """Compact digest: ERROR-record count per service, ranked. Requires the service.name field.
+
+        `trace_id` narrows the digest to the services touched by one request — the aggregation the
+        trace-compression hypothesis actually needs, and the one the 2026-08 runs could not express.
+        """
         if not self.has_fields:
             return "not available: plain logs have no service field to aggregate by."
+        records, label, err = self._scope(trace_id)
+        if err:
+            return err
         counts: dict[str, int] = {}
-        for r in self.records:
+        for r in records:
             if r.is_error:
                 counts[_service_of(r.pod)] = counts.get(_service_of(r.pod), 0) + 1
         if not counts:
-            return "no errors in window."
+            return f"no errors{label or ' in window'}."
         ranked = sorted(counts.items(), key=lambda kv: -kv[1])
-        return "ERROR counts by service (most first): " + ", ".join(f"{s}={n}" for s, n in ranked)
+        return (f"ERROR counts by service{label} (most first): "
+                + ", ".join(f"{s}={n}" for s, n in ranked))
 
     # --- needs trace_id (structured only) ---
     def extract_trace_ids(self, only_with_errors: bool = False, limit: int = 40) -> str:
@@ -186,9 +223,10 @@ class LogREPL:
                 return self.peek(int(arg("start", "from", "begin", default=0)),
                                  int(arg("end", "to", "stop", default=0)))
             if name == "errors_by_cluster":
-                return self.errors_by_cluster(int(arg("limit", "max", default=10)))
+                return self.errors_by_cluster(int(arg("limit", "max", default=10)),
+                                              str(arg("trace_id", "traceId", "id", "trace")))
             if name == "errors_by_service":
-                return self.errors_by_service()
+                return self.errors_by_service(str(arg("trace_id", "traceId", "id", "trace")))
             if name == "extract_trace_ids":
                 return self.extract_trace_ids(
                     bool(arg("only_with_errors", "errors_only", "errors", default=False)),
@@ -230,6 +268,13 @@ def tool_schemas(trace_aware: bool | None = None, condition: str | None = None,
             "name": name, "description": desc,
             "parameters": {"type": "object", "properties": props, "required": required}}}
 
+    # The digests accept an optional trace scope only where a trace_id field exists to scope by.
+    # Declaring the parameter in an arm that has no trace_id would advertise a filter that can only
+    # ever return "not available" -- and would cost that arm the schema tokens to be told so.
+    scope = ({"trace_id": {"type": "string"}} if condition == "structured" else {})
+    scope_doc = (" Optionally pass trace_id to restrict the digest to one request."
+                 if scope else "")
+
     tools = [
         fn("overview", "Summarize the window: line count and severity counts. Call this first.",
            {}, []),
@@ -238,13 +283,13 @@ def tool_schemas(trace_aware: bool | None = None, condition: str | None = None,
         fn("peek", "Return log lines in the index range [start, end).",
            {"start": {"type": "integer"}, "end": {"type": "integer"}}, ["start", "end"]),
         fn("errors_by_cluster",
-           "Compact digest: ERROR lines grouped into message-templates, ranked by count.",
-           {"limit": {"type": "integer"}}, []),
+           "Compact digest: ERROR lines grouped into message-templates, ranked by count." + scope_doc,
+           {"limit": {"type": "integer"}, **scope}, []),
     ]
     if has_fields:
         tools.append(fn("errors_by_service",
-                        "Compact digest: ERROR lines grouped by service, ranked by count.",
-                        {}, []))
+                        "Compact digest: ERROR lines grouped by service, ranked by count." + scope_doc,
+                        dict(scope), []))
     if condition == "structured":
         tools += [
             fn("extract_trace_ids",
