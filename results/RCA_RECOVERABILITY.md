@@ -1,5 +1,14 @@
 # Finding: Nezha fault labels are not zero-shot log-recoverable
 
+> [!NOTE]
+> **Independently reproduced 2026-09-11** from the raw CSVs by `scripts/check_nezha_trace_reach.py`:
+> 12/38 and 8/38 match exactly; "named in failure text" measures 3/38 here vs 2/38 below, a
+> substring-matching difference, not a discrepancy. A claim that these figures were undercounted by a
+> severity parser that missed Train Ticket's logback level token is false — one code path reads both
+> formats. What this document does NOT establish, and what `results/NEZHA_REACHABILITY.md` now adds,
+> is whether the culprit is *reachable* by following `trace_id` from an erroring service: 16/38 (42%).
+
+
 Discovered offline (no cloud cost) while investigating why all methods missed the culprit on window
 `2023-01-29/10_20`. This reshapes the accuracy axis of the benchmark.
 
