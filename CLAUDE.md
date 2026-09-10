@@ -67,6 +67,13 @@ in both LLM methods and was never measured.
 - **Vary one thing.** `structured` currently changes service name, severity, `trace_id` *and* the tool set
   at once. `structured_no_trace` (`nezha.py:270`) is built, tested, and never run — it isolates the actual
   hypothesis.
+- **Scrub identity from the message TEXT, not just the field.** Instrumentation writes trace context and
+  service name into the body, where dropping a column cannot remove it: Train Ticket logback emits
+  `TraceID: <hex> SpanID: <hex>`, and OTel logging emits `otelTraceID=` / `otelSpanID=` /
+  `otelTraceSampled=` / `otelServiceName=`. `LogRecord.body()` removes both families and every arm goes
+  through it. Before trusting any new source, measure the residual: a hex-token scan over the rendered
+  `plain` lines must return zero. On `data/otel_demo` the otel* form was on 15.3% of records and went
+  unmatched until 2026-09-11 (no ERROR line leaked, so published results stand).
 
 ## Conventions
 

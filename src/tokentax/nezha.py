@@ -26,8 +26,27 @@ csv.field_size_limit(sys.maxsize)  # log bodies can be large (stack traces)
 # OTLP severity numbers (https://opentelemetry.io/docs/specs/otel/logs/data-model/)
 _SEV = {"TRACE": 1, "DEBUG": 5, "INFO": 9, "WARN": 13, "WARNING": 13, "ERROR": 17, "FATAL": 21}
 _LEVEL_RE = re.compile(r"\b(ERROR|WARN(?:ING)?|INFO|DEBUG|TRACE|FATAL)\b")
-# "TraceID: <32hex> SpanID: <16hex>" (the body leak we scrub)
-_IDS_RE = re.compile(r"\s*TraceID:\s*[0-9a-fA-F]{16,32}\s*SpanID:\s*[0-9a-fA-F]{8,16}\s*")
+
+# Trace context that instrumentation writes into the MESSAGE TEXT, where dropping the trace_id
+# FIELD cannot remove it. Two emitters produce it, and missing either one silently leaks the
+# independent variable into the arm that is supposed to lack it:
+#   Nezha / Train Ticket logback:  "... TraceID: <32hex> SpanID: <16hex> msg"
+#   OTel logging instrumentation:  "... otelTraceID=<32hex> otelSpanID=<16hex> otelTraceSampled=true"
+# Measured on data/otel_demo (64,356 records): the otel* form appears on 15.3% of records and was
+# NOT matched by the original Nezha-only pattern.
+_IDS_RE = re.compile(
+    r"\s*(?:"
+    r"TraceID:\s*[0-9a-fA-F]{16,32}\s*SpanID:\s*[0-9a-fA-F]{8,16}"
+    r"|otelTraceID=[0-9a-fA-F]*"
+    r"|otelSpanID=[0-9a-fA-F]*"
+    r"|otelTraceSampled=\S*"
+    r")\s*"
+)
+
+# Service identity written into the message text by the same instrumentation. This is a SEPARATE
+# leak and a worse one: `plain` has no service field by construction, so `otelServiceName=` in the
+# body hands it the exact variable the plain -> structured_no_trace contrast isolates.
+_SVC_RE = re.compile(r"\s*otelServiceName=\S*\s*")
 
 # Fault types whose injection produces ERROR logs (vs metrics/trace-only).
 LOG_VISIBLE_TYPES = {"exception", "return"}
@@ -54,13 +73,24 @@ class LogRecord:
     def is_error(self) -> bool:
         return self.level in ("ERROR", "FATAL")
 
-    def body(self, scrub_ids: bool = True) -> str:
-        return _IDS_RE.sub(" ", self.message).strip() if scrub_ids else self.message
+    def body(self, scrub_ids: bool = True, scrub_service: bool = True) -> str:
+        """The message text with emitted identity removed.
+
+        Both defaults are True and should stay that way: the arms must differ ONLY by the fields
+        `LogREPL` prefixes, never by what instrumentation happened to write into the text. Pass
+        False only to inspect the raw leak (see `tests/test_nezha.py`).
+        """
+        out = self.message
+        if scrub_ids:
+            out = _IDS_RE.sub(" ", out)
+        if scrub_service:
+            out = _SVC_RE.sub(" ", out)
+        return out.strip() if (scrub_ids or scrub_service) else out
 
     # --- the three benchmark variants, all from this single record ---
     def to_plain(self) -> str:
-        """Plain: just the message body, trace ids scrubbed out."""
-        return self.body(scrub_ids=True)
+        """Plain: the message body only, with trace ids and service identity scrubbed out."""
+        return self.body()
 
     def to_otlp(self, with_trace: bool = True) -> dict:
         """Structured OTLP LogRecord. with_trace=False => 'structured-no-trace'."""
@@ -68,7 +98,7 @@ class LogRecord:
             "timeUnixNano": self.time_unix_nano,
             "severityText": self.level,
             "severityNumber": self.severity_number,
-            "body": {"stringValue": self.body(scrub_ids=True)},
+            "body": {"stringValue": self.body()},
             "attributes": [
                 {"key": "pod", "value": {"stringValue": self.pod}},
                 {"key": "container", "value": {"stringValue": self.container}},

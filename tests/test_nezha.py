@@ -80,3 +80,44 @@ def test_group_split_disjoint_and_deterministic():
     a = group_split(groups, test_frac=0.3, seed=0)
     b = group_split(groups, test_frac=0.3, seed=0)
     assert a == b and 0 < len(a) < len(set(groups))
+
+
+def _leaky(msg):
+    return LogRecord(1, "n", "p", "c", "T1", "S1", msg, "INFO", False)
+
+
+def test_body_scrubs_both_emitter_formats():
+    # Nezha / Train Ticket logback
+    tt = _leaky("16:42:22.382 INFO  t.s.TravelServiceImpl#532 TraceID: "
+                "ffc8ca7e4c8f06c75142c880d5595d96 SpanID: 439bc949a9eeb0cc [getRoute][ok]")
+    assert "ffc8ca7e" not in tt.to_plain() and "439bc949" not in tt.to_plain()
+    assert "[getRoute][ok]" in tt.to_plain()
+
+    # OTel logging instrumentation — the form the original Nezha-only pattern missed
+    otel = _leaky("Receive ListRecommendations otelSpanID=d530295384d63311 "
+                  "otelTraceID=e1ae042c9f5f4e74ae682da79430a10c otelTraceSampled=true "
+                  "otelServiceName=recommendationservice")
+    p = otel.to_plain()
+    assert "d530295384d63311" not in p and "e1ae042c9f5f4e74ae682da79430a10c" not in p
+    assert "otelTraceSampled" not in p
+    assert "Receive ListRecommendations" in p
+
+
+def test_plain_arm_never_sees_service_identity():
+    """`plain` has no service field by construction; otelServiceName in the body would restore it,
+    which is exactly the variable plain -> structured_no_trace isolates."""
+    r = _leaky("failed to retrieve ads otelServiceName=frontend")
+    assert "frontend" not in r.to_plain()
+    assert "failed to retrieve ads" in r.to_plain()
+    # opt-out still exposes the raw leak, so the confound stays measurable
+    assert "frontend" in r.body(scrub_ids=False, scrub_service=False)
+
+
+def test_otlp_body_is_scrubbed_in_every_condition():
+    r = _leaky("boom otelTraceID=e1ae042c9f5f4e74ae682da79430a10c otelServiceName=cart")
+    for with_trace in (True, False):
+        body = r.to_otlp(with_trace=with_trace)["body"]["stringValue"]
+        assert "e1ae042c" not in body and "cart" not in body
+    # the id still reaches the structured arm through the FIELD, which is the point
+    assert r.to_otlp(with_trace=True)["traceId"] == "T1"
+    assert "traceId" not in r.to_otlp(with_trace=False)
