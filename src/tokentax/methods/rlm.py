@@ -23,9 +23,33 @@ _SYS = (
     "IMPORTANT: healthy services also emit some ERROR lines during normal operation, so look for a "
     "service ORIGINATING a distinctive failure (e.g. a backend-unavailable error). "
     "{nav} "
+    "{roster}"
     "When confident, reply with ONLY JSON {{\"culprit_service\": \"<service-name or none>\"}} "
     "(use 'none' if no service is failing) and DO NOT call a tool in that final turn."
 )
+
+# The ANSWER SPACE, given identically to every arm.
+#
+# Without it the task is open-vocabulary and the arms are not comparably scored: the structured arms
+# learn the service vocabulary for free from `errors_by_service()` output, while the plain arm sees
+# only message templates and answers with the Java class it found there -- 'FoodServiceImpl' instead
+# of 'ts-food-service'. Measured on results/runs/nezha_matrix.jsonl (v1, no roster): only 63% of
+# predictions named a real service at all, and 'FoodServiceImpl'/'FoodService' accounted for 20 of
+# 169 answered fault cells. That is a vocabulary artifact scored as a reasoning failure, and it
+# penalised `plain` specifically.
+#
+# This is the QUESTION, not evidence: it says which services exist, never which line belongs to
+# which service. `plain` still cannot attribute a line to a service, so the
+# plain -> structured_no_trace contrast is preserved. OpenRCA (ICLR'25) does the same thing --
+# "all possible failure reasons and originating components are provided in the prompt beforehand".
+_ROSTER = ("The culprit is exactly one of these {n} services, or none: {names}. "
+           "Answer with one of these names verbatim. ")
+
+
+def _roster_for(records) -> str:
+    from tokentax.nezha import _service_of
+    names = sorted({_service_of(r.pod) for r in records})
+    return _ROSTER.format(n=len(names), names=", ".join(names)) if names else ""
 # Navigation hints are PARALLEL across conditions by design. The 2026-06 prompts told the structured
 # arm to call its digest first and "answer from the digest if it is clear", and told the plain arm only
 # to grep -- prompt-level steering stacked on top of the tool-level advantage. See WITHDRAWAL.md.
@@ -74,7 +98,9 @@ class RLMMethod:
     async def apredict(self, records: list[LogRecord], condition: str, task: str) -> Result:
         repl = LogREPL(records, condition=condition)
         tools = tool_schemas(condition=condition, matched_schemas=self.matched_schemas)
-        system = _SYS.format(nav=_nav_for(condition))
+        # roster is computed from the same records in every arm, so it costs identical tokens
+        # and cannot carry a per-arm advantage.
+        system = _SYS.format(nav=_nav_for(condition), roster=_roster_for(records))
         messages: list[dict] = [
             {"role": "system", "content": system},
             {"role": "user", "content": "Here is the window overview:\n" + repl.overview()

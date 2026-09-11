@@ -54,6 +54,14 @@ REACH = ROOT / "results/runs/nezha_reach.jsonl"
 OUT = ROOT / "results/runs/nezha_matrix.jsonl"
 DOC = ROOT / "results/NEZHA_MATRIX.md"
 
+
+def _retag(tag: str) -> None:
+    """A prompt change means a NEW run and a NEW file (hard rule), never a resumed one."""
+    global OUT, DOC
+    if tag:
+        OUT = ROOT / f"results/runs/nezha_matrix_{tag}.jsonl"
+        DOC = ROOT / f"results/NEZHA_MATRIX_{tag.upper()}.md"
+
 TT_DATES = ["2023-01-29", "2023-01-30"]          # Train Ticket only; OnlineBoutique is out (5/14
                                                  # log-visible windows carry any error at all)
 CONDITIONS = ("plain", "structured_no_trace", "structured")
@@ -64,6 +72,7 @@ MAX_ROUNDS = 14
 MAX_TOTAL_TOKENS = 250_000
 NUM_CTX = 32_768
 CONCURRENCY = 6
+RETRY_CONCURRENCY = 2   # 429s on kimi-k3/glm-5.2 at 6; retries go slower, not differently
 MATCHED_SCHEMAS = True                            # hard rule: identical tool schemas in every arm
 N_NORMAL = 6                                      # control windows, >=5 min from any injection
 
@@ -133,11 +142,43 @@ def load_cases() -> list[dict]:
     return cases + normals[::step][:N_NORMAL]
 
 
-def done_keys() -> set:
+def _raw_rows() -> list[dict]:
     if not OUT.exists():
-        return set()
+        return []
+    return [json.loads(x) for x in OUT.read_text().splitlines() if x.strip()]
+
+
+# A transport failure is NOT an observation. A 429 means the model never ran, so the cell is still
+# owed — unlike a timeout or a token-ceiling abort, which ARE observations of the model's behaviour
+# and keep their measured cost. Retrying a 429 is resuming an unfinished run, not re-rolling a
+# result that came out unfavourably; the distinction is what keeps this from being outcome-dependent
+# stopping (WITHDRAWAL.md defect 2).
+RETRYABLE = ("429", "Timeout", "ConnectError", "ReadError", "RemoteProtocolError")
+
+
+def _is_retryable(err: str) -> bool:
+    return bool(err) and any(t in err for t in RETRYABLE) and "timeout" != err
+
+
+def done_keys() -> set:
+    """Cells that need no further work: answered, or failed in a way that IS an observation."""
     return {(r["model"], r["condition"], r["window"])
-            for r in (json.loads(x) for x in OUT.read_text().splitlines() if x.strip())}
+            for r in _raw_rows() if not _is_retryable(r["error"])}
+
+
+def dedupe(rows: list[dict]) -> list[dict]:
+    """One row per cell. A retried cell appends a second row; prefer the answered one, else the last.
+
+    Without this, a 429 row and its successful retry would both reach the means and the cell would
+    be counted twice — once as a failure with total_tok=0.
+    """
+    best: dict[tuple, dict] = {}
+    for r in rows:
+        k = (r["model"], r["condition"], r["window"])
+        prev = best.get(k)
+        if prev is None or (prev["error"] and not r["error"]):
+            best[k] = r
+    return list(best.values())
 
 
 async def run_cell(sem, model, cond, case):
@@ -186,7 +227,7 @@ async def run_cell(sem, model, cond, case):
 
 
 def regen():
-    rows = [json.loads(x) for x in OUT.read_text().splitlines() if x.strip()] if OUT.exists() else []
+    rows = dedupe(_raw_rows())
     if not rows:
         print("no rows yet")
         return
@@ -258,12 +299,18 @@ async def main() -> int:
     ap.add_argument("--smoke", action="store_true", help="1 model x 3 arms x 3 windows")
     ap.add_argument("--regen", action="store_true")
     ap.add_argument("--models", default="")
+    ap.add_argument("--tag", default="", help="output suffix; a prompt/config change needs a new tag")
+    ap.add_argument("--concurrency", type=int, default=0)
+    ap.add_argument("--retry", action="store_true",
+                    help="re-run only cells whose failure was a transport error (429/connect)")
     a = ap.parse_args()
+    _retag(a.tag)
 
     if a.regen:
         regen()
         return 0
-    if not os.getenv("OLLAMA_API_KEY"):
+    local = "localhost" in os.getenv("OLLAMA_HOST", "") or "127.0.0.1" in os.getenv("OLLAMA_HOST", "")
+    if not local and not os.getenv("OLLAMA_API_KEY"):
         print("OLLAMA_API_KEY not set (set -a; . ./.env; set +a)", file=sys.stderr)
         return 2
 
@@ -281,7 +328,7 @@ async def main() -> int:
         f"x {len(models)} models = {len(models) * len(CONDITIONS) * len(cases)} cells; "
         f"{len(done)} already done, {len(todo)} to run")
 
-    sem = asyncio.Semaphore(CONCURRENCY)
+    sem = asyncio.Semaphore(a.concurrency or (RETRY_CONCURRENCY if a.retry else CONCURRENCY))
     await asyncio.gather(*(run_cell(sem, m, c, case) for m, c, case in todo))
     regen()
     return 0
