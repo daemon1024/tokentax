@@ -1,5 +1,30 @@
 # rca-lab, measured: the errors are in the spans, not the logs
 
+> [!CAUTION]
+> **PARTIALLY RETRACTED the same day, by the author.** The capture below was taken with **no scenario
+> active**. The scenario operator never installed — `make deploy` aborts at the app-rollout wait
+> because `order-service` cannot pull an arm64 image, and the operator step runs after it — so
+> `kubectl get maintenancejobs` returns nothing and the maintenance CRD does not exist. The 322 log
+> records are **ambient baseline traffic**, not an injected fault.
+>
+> The load-generator's 10.1% error rate is its own client-side view of 4xx/5xx responses; it does not
+> mean a fault was injected.
+>
+> This invalidates the central claim below. `product-catalog:142` already contains
+> `slog.ErrorContext(r.Context(), "recommendations rpc failed", "error", err)` — trace-correlated, on
+> the request span, and exactly the symptom line sc-10 is designed to produce. `fulfillment-service`
+> has four more `ErrorContext` sites with request context. **These call sites have never fired.**
+>
+> What still stands, because it does not depend on a scenario: the per-service source facts
+> (`review-service`, `cart-service` and `recommendation-service` genuinely do not log request-path
+> errors), `api-gateway` exporting zero records despite correct configuration, the 3.1% trace_id
+> coverage on the records that did arrive, and both instrumentation predictions.
+>
+> What does NOT stand: "the log-only comparison cannot be run here", and the 680x error-span-to-
+> error-log ratio as a statement about rca-lab under fault. Neither was tested. Re-measure with
+> sc-10 active before citing anything here.
+
+
 **This is the finding that ends the log-only framing.** rca-lab was the best candidate found — the
 only source meeting all six requirements on paper (`RCA_LAB_EVALUATION.md`). Deployed and captured,
 its logs are nearly empty while its traces are rich. The project's independent variable barely exists
