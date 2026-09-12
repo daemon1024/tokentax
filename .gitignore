@@ -6,6 +6,13 @@ data/raw/
 data/otel_demo/
 otel-demo-src/
 results/runs/*.jsonl
+# ...but the raw cells behind published findings MUST be in git. They are small (<1MB)
+# and they are the only provenance that survives deleting the source data.
+!results/runs/nezha_matrix.jsonl
+!results/runs/nezha_matrix_v2.jsonl
+!results/runs/nezha_reach.jsonl
+!results/runs/cloud_matrix_matched.jsonl
+!results/runs/incontext_baseline.jsonl
 results/runs/*.parquet
 .pytest_cache/
 .ruff_cache/
