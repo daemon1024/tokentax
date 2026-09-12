@@ -1,0 +1,83 @@
+# tokentax capture collector for coroot/rca-lab.
+#
+# Runs on the Mac host (in Docker, attached to the `kind` network). The
+# in-cluster rca-lab otel-collector forwards to this one over OTLP/gRPC; this
+# one writes LogRecords and Spans to two files in OTLP-JSON, one JSON object
+# per line, which is exactly what tokentax/src/tokentax/otel_loader.py reads.
+#
+# Pin the same distro+version the lab uses (file exporter is contrib-only):
+#   ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.158.0
+#
+# Start:
+#   docker run -d --name tokentax-capture --network kind --ip 172.18.0.250 \
+#     -v "$PWD/rcalab-capture-collector.yaml:/etc/otelcol/config.yaml:ro" \
+#     -v "$HOME/tokentax-capture:/capture" \
+#     ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.158.0 \
+#     --config=/etc/otelcol/config.yaml
+#
+# Then point the lab at it:
+#   make otel OTLP_ENDPOINT=172.18.0.250:4317 OTLP_SIGNALS=traces,logs
+#
+# NOTE ON HOSTNAMES: the in-cluster collector is a Pod. A Pod cannot resolve
+# `host.docker.internal` -- that name is injected into the kind *node
+# container's* /etc/hosts by Docker Desktop, and CoreDNS forwards unknown names
+# to the node's upstream resolver (Docker's embedded DNS at 127.0.0.11), which
+# is not reachable from a Pod's network namespace. Use a literal IP on the
+# `kind` bridge network, as above.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+        # The lab's collector batches before forwarding; give headroom over the
+        # 4 MiB gRPC default so a large batch is never rejected.
+        max_recv_msg_size_mib: 32
+      # Uncomment if you also want OTLP/HTTP:
+      # http:
+      #   endpoint: 0.0.0.0:4318
+
+# No `processors:` section on purpose. The lab-side collector already ran
+# memory_limiter, k8sattributes and batch; re-processing here would only risk
+# changing the bytes we are trying to measure. Each batch that arrives from the
+# cluster becomes exactly one line in the output file.
+
+exporters:
+  # ---- LOGS: the file otel_loader.parse_otlp_jsonl() reads ----
+  file/logs:
+    path: /capture/logs.jsonl
+    format: json          # default; one JSON object ({"resourceLogs":[...]}) per line
+    append: true          # survive a collector restart without truncating
+    flush_interval: 1s
+    create_directory: true
+    # No `rotation:` -- rotation is not supported together with append: true.
+
+  # ---- TRACES: separate file, same framing ({"resourceSpans":[...]} per line) ----
+  file/traces:
+    path: /capture/traces.jsonl
+    format: json
+    append: true
+    flush_interval: 1s
+    create_directory: true
+
+  # Metrics are not captured. This exporter only exists so that, if the lab is
+  # deployed without OTLP_SIGNALS=traces,logs, incoming metrics are accepted and
+  # dropped quietly instead of failing with gRPC "Unimplemented" and making the
+  # lab-side collector retry forever.
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: []
+      exporters: [file/logs]
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [file/traces]
+    metrics:
+      receivers: [otlp]
+      processors: []
+      exporters: [debug]
