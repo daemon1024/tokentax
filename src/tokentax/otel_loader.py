@@ -48,6 +48,28 @@ def _attrs(attr_list: list[dict]) -> dict:
     return {a["key"]: _attr_val(a.get("value", {})) for a in attr_list or []}
 
 
+def _body_text(body: dict) -> str:
+    """Log body as text, for EVERY OTLP AnyValue shape the SDKs actually emit.
+
+    Reading only `stringValue` silently yields "" for structured bodies: measured on
+    data/otel_demo, 9 of 1,558 sampled records carry `kvlistValue` instead, and those lines
+    vanished from every arm — including the ERROR lines an arm is supposed to find. An empty
+    body is indistinguishable from a blank log line downstream, so the loss is invisible.
+    """
+    if not body:
+        return ""
+    if "stringValue" in body:
+        return str(body["stringValue"])
+    if "kvlistValue" in body:
+        kv = _attrs((body.get("kvlistValue") or {}).get("values", []))
+        return " ".join(f"{k}={v}" for k, v in kv.items() if v is not None)
+    if "arrayValue" in body:
+        vals = (body.get("arrayValue") or {}).get("values", []) or []
+        return " ".join(str(_attr_val(v)) for v in vals if _attr_val(v) is not None)
+    v = _attr_val(body)
+    return "" if v is None else str(v)
+
+
 def parse_otlp_jsonl(path: str | Path) -> list[LogRecord]:
     out: list[LogRecord] = []
     for line in open(path, encoding="utf-8", errors="replace"):
@@ -64,7 +86,7 @@ def parse_otlp_jsonl(path: str | Path) -> list[LogRecord]:
             for sl in rl.get("scopeLogs", []):
                 for lr in sl.get("logRecords", []):
                     a = _attrs(lr.get("attributes", []))
-                    body = (lr.get("body", {}) or {}).get("stringValue", "") or ""
+                    body = _body_text(lr.get("body", {}) or {})
                     # fold string-ish attributes into the message so methods see the detail
                     extra = " ".join(f"{k}={v}" for k, v in a.items()
                                      if v is not None and not str(k).startswith(("telemetry.", "process.")))

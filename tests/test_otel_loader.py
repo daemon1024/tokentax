@@ -37,3 +37,22 @@ def test_parse_and_severity_and_attr_fold(tmp_path):
     assert "telemetry.sdk.language" not in pc.to_plain()  # noise attrs dropped
     assert recs[1].level == "INFO"                    # severityNumber 9 -> INFO (not "Information")
     assert recs[2].level == "" and not recs[2].trace_id
+
+
+def test_body_text_covers_every_anyvalue_shape():
+    """Reading only stringValue silently drops structured bodies; measured at 9/1558 on
+    data/otel_demo, and an empty body is indistinguishable from a blank line downstream."""
+    from tokentax.otel_loader import _body_text
+    assert _body_text({"stringValue": "plain message"}) == "plain message"
+    kv = _body_text({"kvlistValue": {"values": [
+        {"key": "event", "value": {"stringValue": "cart.miss"}},
+        {"key": "count", "value": {"intValue": 3}}]}})
+    assert "event=cart.miss" in kv and "count=3" in kv
+    arr = _body_text({"arrayValue": {"values": [
+        {"stringValue": "a"}, {"stringValue": "b"}]}})
+    assert arr == "a b"
+    assert _body_text({"intValue": 42}) == "42"
+    assert _body_text({}) == ""
+    # the regression this guards: a structured body must NEVER read as empty
+    assert _body_text({"kvlistValue": {"values": [
+        {"key": "error", "value": {"stringValue": "boom"}}]}}) != ""
