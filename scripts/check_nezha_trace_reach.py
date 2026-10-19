@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 from collections import Counter
 from pathlib import Path
@@ -187,7 +188,7 @@ def main() -> int:
         if saved:
             ratios = sorted(r["reach_ratio"] for r in saved if r["reach_ratio"] is not None)
             if ratios:
-                med = ratios[len(ratios) // 2]
+                med = statistics.median(ratios)  # true median; n//2 picked the upper-middle for even n
                 print(f"  median reach_chars / window_chars       {med:.4f}"
                       f"  ({1 / med:.0f}x smaller than the window)" if med else "")
 

@@ -1,5 +1,14 @@
 # A crashed culprit is unreachable by trace correlation — in logs *and* in spans
 
+> [!NOTE]
+> **Counts corrected 2026-10-20** against the files actually saved in `data/rcalab/`, by an independent
+> recompute (`talk/NUMBERS.md`, claim 9). The first version of this document quoted 464 ERROR records
+> and 83,596 spans / 3,224 error traces. Those were read from the capture files while they were still
+> growing; the saved copies are a later and longer slice. The original's own gate table already showed
+> 760 usable edge errors, which could not exceed the record count, so the 464 was stale. Every ratio
+> and the finding itself are unchanged: 100% of ERROR records carry a trace_id, the culprit emits zero,
+> and **zero** error-bearing traces reach it under either count.
+
 **Measured on rca-lab sc-10**, a real OOMKill fault, no modification to the lab, no hand-authored log
 lines. This is the cleanest cause-versus-symptom data this project has ever had, and it produces a
 null for trace context by a mechanism no dataset choice can fix.
@@ -12,8 +21,8 @@ fault window, logs and spans forwarded to a host collector and parsed with `otel
 
 | | baseline | under sc-10 |
 |---|---|---|
-| ERROR log records | 6 | **464** |
-| ERROR records carrying `trace_id` | 2 (33%) | **464 (100%)** |
+| ERROR log records | 6 | **760** |
+| ERROR records carrying `trace_id` | 2 (33%) | **760 (100%)** |
 | culprit's own ERROR lines | — | **0** |
 | `argmax(errors_by_service)` | — | `product-catalog` — **wrong** |
 
@@ -39,15 +48,15 @@ present, free, and lands on an empty set.
 ## The span side does not rescue it
 
 The obvious answer is that logs are the wrong signal and the span tree holds the chain. Measured over
-83,596 spans / 17,268 traces in the same window:
+92,370 spans / 18,974 traces in the saved 60 MB trace sample:
 
 | | |
 |---|---|
-| error-bearing traces | 3,224 |
+| error-bearing traces | 3,617 |
 | services per error-bearing trace | median **2.0**, max **2** |
-| error traces reaching `recommendation-service` | **0 / 3,224 (0%)** |
+| error traces reaching `recommendation-service` | **0 / 3,617 (0%)** |
 
-Error spans come from `load-generator` (3,176), `product-catalog` (1,342) and `cart-service` (454).
+Error spans come from `load-generator` (3,569), `product-catalog` (1,514) and `cart-service` (490).
 **The culprit appears in none of them.**
 
 ## Why — and why it generalises

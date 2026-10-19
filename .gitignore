@@ -12,6 +12,7 @@ results/runs/*.jsonl
 !results/runs/nezha_matrix_v2.jsonl
 !results/runs/nezha_reach.jsonl
 !results/runs/cloud_matrix_matched.jsonl
+!results/runs/cloud_matrix.jsonl
 !results/runs/incontext_baseline.jsonl
 results/runs/*.parquet
 .pytest_cache/

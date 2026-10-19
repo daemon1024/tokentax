@@ -47,8 +47,10 @@ Across all 101 injected episodes (including cpu/network types the document exclu
 holds up better than its label suggests: **45/45 windows contain an error**, 20/45 are reachable, and
 16/39 cause≠symptom cells are reachable.
 
-**Compression on the reachable path:** median `reach_chars / window_chars` = **0.1414**, i.e. the
-lines of the reaching traces are ~7× smaller than the window. On OnlineBoutique's two cells it is
+**Compression on the reachable path:** median `reach_chars / window_chars` = **0.1048** over the 12
+usable log-visible cells, i.e. the lines of the reaching traces are ~9.5× smaller than the window.
+(First published as 0.1414 / ~7×: the script took the upper of the two middle values for an even n.
+Corrected 2026-10-20; ratio is over message-body characters, not tokens.) On OnlineBoutique's two cells it is
 0.0101 (~99×), but n=2.
 
 ## What this means
@@ -65,9 +67,9 @@ report them as a separate outcome rather than folding them into an accuracy deno
 **OnlineBoutique is out.** 5 of 14 log-visible windows contain any error at all; 2 are usable. The
 36% error-bearing rate is the same wall `RCA_RECOVERABILITY.md` hit.
 
-**7× is not 331×.** The navigation-vs-reading result in `NAVIGATION.md` compares against reading a
+**9.5× is not 77–331×.** The navigation-vs-reading result in `NAVIGATION.md` compares against reading a
 1.07M-token window. Nezha's per-minute TrainTicket windows are ~4.5 MB (~1.1M tokens) but the
-*reaching subset* is only 7× smaller, not 300×. These measure different things and must not be
+*reaching subset* is only ~9.5× smaller. These measure different things and must not be
 compared: 331× is navigate-vs-read, 7× is trace-scoped-vs-whole-window.
 
 ## Caveats

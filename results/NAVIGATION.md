@@ -1,5 +1,19 @@
 # Navigation vs reading: the result that survives
 
+> [!NOTE]
+> **Precision corrections, 2026-10-20** (independent recompute, `talk/NUMBERS.md` claims 1 and 8). The
+> finding stands; four printed numbers needed qualifying.
+> - **331× is the median of the six per-cell ratios** (330.8×). The two medians printed below divide to
+>   **282.9×**. A matched-schema rerun of the same six pairs (`runs/cloud_matrix_matched.jsonl`) gives a
+>   median per-cell ratio of **77.1×** (range 9.9×–436.9×). The defensible statement is "one to three
+>   orders of magnitude, per-cell range 7×–939× on n=6", not a single number.
+> - **Rounds were 2–13**, not 2–4 (5 of 6 cells were in 2–4; one qwen cell took 13).
+> - **The mechanical bound** (898 / 4,783 tokens) reproduces with the code at `bdf6769`. With the current
+>   body scrub (`12af6a8`, which removes leaked `otelTraceID=`/`otelServiceName=` text from 15.3% of
+>   records) it is **795 / 4,274**. The ratios held: 5.4–5.5× median, 56–58× worst case. The full window
+>   1,172,567 does not reproduce under any definition; the nearest is 1,177,947.
+> - Failing traces span **2–10** services (not 3–10) and **4–31** lines (not 4–27).
+
 **This is the only empirical claim in this repository that is orders of magnitude outside the noise
 floor.** Everything else measured here — every plain-vs-structured contrast — is smaller than the
 run-to-run variance of the models themselves (see the retraction banner on `FINDING.md`).
