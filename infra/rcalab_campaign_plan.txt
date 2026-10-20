@@ -1,0 +1,32 @@
+# rca-lab dataset campaign, 2026-10-20. <name> <scenario|healthy> <baseline_s> <fault_s> <recovery_s>
+# Fault windows: 10 min, 15 min for slow-onset mechanisms (leaks, GC drift, DB-internal build-up).
+# The CR's own duration ends a fault early if it is shorter (sc-02: 5 min).
+# Order: benchmark-relevant degradations first; full-format re-records of sc-04/sc-06 and the long
+# healthy window BEFORE the scenarios that mutate DB state (sc-23..27) or may break the single-member
+# databases (Galera, standby, step-down), so a lasting side effect cannot leak into them.
+sc-11    sc-11   300 600 300
+sc-15    sc-15   300 600 300
+sc-10    sc-10   300 900 300
+sc-09    sc-09   300 600 300
+sc-07    sc-07   300 900 300
+sc-08    sc-08   300 900 300
+sc-12    sc-12   300 600 300
+sc-13    sc-13   300 600 300
+sc-14    sc-14   300 600 300
+sc-04_r2 sc-04   300 600 300
+sc-06_r2 sc-06   300 600 300
+healthy  healthy 1800 0 0
+sc-03    sc-03   300 600 300
+sc-05    sc-05   300 600 300
+sc-01    sc-01   300 600 300
+sc-26    sc-26   300 600 300
+sc-21    sc-21   300 900 300
+sc-23    sc-23   300 600 300
+sc-24    sc-24   300 900 300
+sc-25    sc-25   300 900 300
+sc-27    sc-27   300 900 300
+sc-19    sc-19   300 600 300
+sc-02    sc-02   300 300 300
+sc-20    sc-20   300 600 300
+sc-22    sc-22   300 600 300
+sc-28    sc-28   300 600 300

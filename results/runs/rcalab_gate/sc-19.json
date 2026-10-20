@@ -1,0 +1,332 @@
+{
+ "capture": "sc-19",
+ "scenario": "sc-19",
+ "culprit": "(none)",
+ "meta": {
+  "name": "sc-19",
+  "scenario": "sc-19",
+  "format": "dataset-v1",
+  "cluster_context": "kind-rca-lab",
+  "baseline_s": 300,
+  "fault_s": 600,
+  "recovery_s": 300,
+  "cr_duration": "10m0s",
+  "baseline_start_ns": 1792518634330511000,
+  "baseline_end_ns": 1792518934413949000,
+  "fault_start_ns": 1792518935154808000,
+  "fault_end_ns": 1792519535423594000,
+  "recovery_start_ns": 1792519535423594000,
+  "recovery_end_ns": 1792519837719873000,
+  "effect_verified_ns": 1792518937669563000,
+  "effect_present_at_end": false,
+  "fault_ended_by": "cr_phase_Reverting",
+  "controller_line": "{\"level\":\"info\",\"ts\":\"2026-10-20T17:55:34Z\",\"msg\":\"starting run\",\"controller\":\"maintenancejob\",\"controllerGroup\":\"maintenance.platform.dev\",\"controllerKind\":\"MaintenanceJob\",\"MaintenanceJob\":{\"name\":\"sc-19\",\"namespace\":\"default\"},\"namespace\":\"default\",\"name\":\"sc-19\",\"reconcileID\":\"2c602ffc-f38a-4f70-b8b5-6cc04132f46c\",\"runID\":\"21daf21d-7b56-4eb0-a6ea-e36762054e33\",\"trigger\":\"Enabled\",\"duration\":\"10m0s\"}",
+  "raw_bytes": {
+   "logs": 12641681,
+   "traces": 634154541
+  },
+  "zstd_test_ok": true,
+  "collector_stopped_before_end": false,
+  "live_reset": "docker stop/start around truncation",
+  "host_collector_ip": "172.18.0.5"
+ },
+ "baseline_logs": {
+  "minutes": 5.0,
+  "records": 3032,
+  "records_with_trace": 3002,
+  "error_records": 196,
+  "error_per_min": 39.19,
+  "warn_records": 2786,
+  "records_by_service": {
+   "payment-service": 2786,
+   "fulfillment-service": 206,
+   "load-generator": 30,
+   "order-service": 10
+  },
+  "errors_by_service": {
+   "fulfillment-service": 196
+  }
+ },
+ "fault_logs": {
+  "minutes": 10.0,
+  "records": 5815,
+  "records_with_trace": 5755,
+  "error_records": 389,
+  "error_per_min": 38.88,
+  "warn_records": 5328,
+  "records_by_service": {
+   "payment-service": 5328,
+   "fulfillment-service": 408,
+   "load-generator": 60,
+   "order-service": 19
+  },
+  "errors_by_service": {
+   "fulfillment-service": 389
+  }
+ },
+ "argmax": {
+  "top": "fulfillment-service",
+  "tied": false,
+  "strictly_correct": false
+ },
+ "log_reach": {
+  "error_records": 389,
+  "error_records_with_trace": 389,
+  "erroring_traces": 389,
+  "foreign_erroring_traces": 389,
+  "reach_traces": 0,
+  "reach_frac_of_foreign": 0.0,
+  "multi_service_erroring_traces": 0,
+  "median_services_per_erroring_trace": 1,
+  "culprit_log_records": 0,
+  "culprit_error_records": 0
+ },
+ "culprit_named_in_foreign_errors": 0,
+ "error_templates_sample": [
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21184 product_id=393569 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21193 product_id=388870 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21195 product_id=281438 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21196 product_id=240240 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21197 product_id=83202 exception.message=inventory service returned status 404: {\"erro",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21198 product_id=415494 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21214 product_id=43377 exception.message=inventory service returned status 404: {\"erro",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21219 product_id=223933 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21226 product_id=285081 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21227 product_id=251932 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21228 product_id=350874 exception.message=inventory service returned status 404: {\"err",
+   1
+  ],
+  [
+   "fulfillment-service: Inventory reservation failed, skipping order order_id=21234 product_id=477196 exception.message=inventory service returned status 404: {\"err",
+   1
+  ]
+ ],
+ "baseline_spans": {
+  "spans": 235667,
+  "traces": 52186,
+  "error_spans_by_service": {
+   "load-generator": 3369,
+   "fulfillment-service": 597
+  },
+  "error_traces": 3576,
+  "error_traces_reaching_culprit": 0,
+  "culprit_spans": 0,
+  "culprit_error_spans": 0,
+  "median_services_per_error_trace": 2,
+  "slow_ms": 10000.111796,
+  "slow_traces": 521,
+  "slow_traces_reaching_culprit": 0
+ },
+ "fault_spans": {
+  "spans": 456132,
+  "traces": 101993,
+  "error_spans_by_service": {
+   "load-generator": 7513,
+   "fulfillment-service": 1185,
+   "order-service": 1
+  },
+  "error_traces": 7923,
+  "error_traces_reaching_culprit": 0,
+  "culprit_spans": 0,
+  "culprit_error_spans": 0,
+  "median_services_per_error_trace": 2,
+  "slow_ms": 10000.111796,
+  "slow_traces": 1987,
+  "slow_traces_reaching_culprit": 0
+ },
+ "ambiguity": {
+  "units_ok": true,
+  "units": "timestamps look like ns; capture spans 600.2s (5,815 stamped records)",
+  "all_services": [
+   {
+    "W": 0.05,
+    "usable": 389,
+    "edge_errors": 389,
+    "median_concurrent": 2,
+    "median_services": 1,
+    "single_service_frac": 1.0,
+    "verdict": "STOP",
+    "why": "median 2.0 concurrent requests < 5.0: the time window IS effectively the request, so trace_id has nothing to disambiguate"
+   },
+   {
+    "W": 0.25,
+    "usable": 389,
+    "edge_errors": 389,
+    "median_concurrent": 5,
+    "median_services": 1,
+    "single_service_frac": 1.0,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   },
+   {
+    "W": 1.0,
+    "usable": 389,
+    "edge_errors": 389,
+    "median_concurrent": 19,
+    "median_services": 1,
+    "single_service_frac": 1.0,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   },
+   {
+    "W": 2.0,
+    "usable": 389,
+    "edge_errors": 389,
+    "median_concurrent": 39,
+    "median_services": 1,
+    "single_service_frac": 1.0,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   }
+  ],
+  "api_gateway": [
+   {
+    "W": 0.05,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 0.25,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 1.0,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 2.0,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   }
+  ]
+ },
+ "tokens_fault_window": {
+  "repl_lines_plain": 553882,
+  "repl_lines_structured_no_trace": 601218,
+  "repl_lines_structured": 639338,
+  "stage0_format_window_plain": 531637
+ },
+ "fault_minutes": [
+  {
+   "start_ns": 1792518935154808000,
+   "records": 578,
+   "errors": 39,
+   "tok_plain": 54463
+  },
+  {
+   "start_ns": 1792518995154808064,
+   "records": 581,
+   "errors": 39,
+   "tok_plain": 54909
+  },
+  {
+   "start_ns": 1792519055154808064,
+   "records": 594,
+   "errors": 38,
+   "tok_plain": 55590
+  },
+  {
+   "start_ns": 1792519115154808064,
+   "records": 594,
+   "errors": 39,
+   "tok_plain": 56205
+  },
+  {
+   "start_ns": 1792519175154808064,
+   "records": 589,
+   "errors": 39,
+   "tok_plain": 55868
+  },
+  {
+   "start_ns": 1792519235154808064,
+   "records": 597,
+   "errors": 39,
+   "tok_plain": 56513
+  },
+  {
+   "start_ns": 1792519295154808064,
+   "records": 577,
+   "errors": 39,
+   "tok_plain": 54096
+  },
+  {
+   "start_ns": 1792519355154808064,
+   "records": 562,
+   "errors": 39,
+   "tok_plain": 53239
+  },
+  {
+   "start_ns": 1792519415154808064,
+   "records": 587,
+   "errors": 38,
+   "tok_plain": 55403
+  },
+  {
+   "start_ns": 1792519475154808064,
+   "records": 555,
+   "errors": 40,
+   "tok_plain": 52675
+  }
+ ],
+ "verdict": {
+  "WS": false,
+  "S3": false,
+  "PR": false,
+  "WS_why": "389 ERROR in fault (38.88/min) vs baseline 39.19/min",
+  "S3_why": "argmax=fulfillment-service tied=False correct=False; reach 0/389 foreign-erroring traces",
+  "PR_why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+ }
+}

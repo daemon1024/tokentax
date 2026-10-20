@@ -1,0 +1,334 @@
+{
+ "capture": "sc-04_r2",
+ "scenario": "sc-04",
+ "culprit": "order-service",
+ "meta": {
+  "name": "sc-04_r2",
+  "scenario": "sc-04",
+  "format": "dataset-v1",
+  "cluster_context": "kind-rca-lab",
+  "baseline_s": 300,
+  "fault_s": 600,
+  "recovery_s": 300,
+  "cr_duration": "10m0s",
+  "baseline_start_ns": 1792501822680527000,
+  "baseline_end_ns": 1792502122727491000,
+  "fault_start_ns": 1792502123413652000,
+  "fault_end_ns": 1792502726716795000,
+  "recovery_start_ns": 1792502726716795000,
+  "recovery_end_ns": 1792503053749616000,
+  "effect_verified_ns": 1792502125956763000,
+  "effect_present_at_end": false,
+  "fault_ended_by": "fault_s",
+  "controller_line": "{\"level\":\"info\",\"ts\":\"2026-10-20T13:15:23Z\",\"msg\":\"starting run\",\"controller\":\"maintenancejob\",\"controllerGroup\":\"maintenance.platform.dev\",\"controllerKind\":\"MaintenanceJob\",\"MaintenanceJob\":{\"name\":\"sc-04\",\"namespace\":\"default\"},\"namespace\":\"default\",\"name\":\"sc-04\",\"reconcileID\":\"65abfafa-b422-429a-b588-51ec70f7b604\",\"runID\":\"3fae264c-a85f-4b15-9b8d-ca51d8c3669d\",\"trigger\":\"Enabled\",\"duration\":\"10m0s\"}",
+  "raw_bytes": {
+   "logs": 17603047,
+   "traces": 698988265
+  },
+  "zstd_test_ok": true,
+  "collector_stopped_before_end": false,
+  "live_reset": "docker stop/start around truncation",
+  "host_collector_ip": "172.18.0.5"
+ },
+ "baseline_logs": {
+  "minutes": 5.0,
+  "records": 235,
+  "records_with_trace": 205,
+  "error_records": 197,
+  "error_per_min": 39.39,
+  "warn_records": 2,
+  "records_by_service": {
+   "fulfillment-service": 200,
+   "load-generator": 30,
+   "order-service": 3,
+   "payment-service": 2
+  },
+  "errors_by_service": {
+   "fulfillment-service": 197
+  }
+ },
+ "fault_logs": {
+  "minutes": 10.06,
+  "records": 5712,
+  "records_with_trace": 5513,
+  "error_records": 3772,
+  "error_per_min": 375.13,
+  "warn_records": 1725,
+  "records_by_service": {
+   "order-service": 5249,
+   "fulfillment-service": 402,
+   "load-generator": 60,
+   "payment-service": 1
+  },
+  "errors_by_service": {
+   "order-service": 3377,
+   "fulfillment-service": 395
+  }
+ },
+ "argmax": {
+  "top": "order-service",
+  "tied": false,
+  "strictly_correct": true
+ },
+ "log_reach": {
+  "error_records": 3772,
+  "error_records_with_trace": 3772,
+  "erroring_traces": 2119,
+  "foreign_erroring_traces": 395,
+  "reach_traces": 0,
+  "reach_frac_of_foreign": 0.0,
+  "multi_service_erroring_traces": 6,
+  "median_services_per_erroring_trace": 1,
+  "culprit_log_records": 5249,
+  "culprit_error_records": 3377
+ },
+ "culprit_named_in_foreign_errors": 395,
+ "error_templates_sample": [
+  [
+   "order-service: Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.tr",
+   1527
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10000ms.",
+   994
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10001ms.",
+   175
+  ],
+  [
+   "order-service: Lock wait timeout exceeded; try restarting transaction",
+   120
+  ],
+  [
+   "order-service: Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.da",
+   120
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10002ms.",
+   97
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10003ms.",
+   51
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10004ms.",
+   33
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10006ms.",
+   31
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10005ms.",
+   26
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10007ms.",
+   24
+  ],
+  [
+   "order-service: HikariPool-1 - Connection is not available, request timed out after 10010ms.",
+   12
+  ]
+ ],
+ "baseline_spans": {
+  "spans": 294121,
+  "traces": 60059,
+  "error_spans_by_service": {
+   "load-generator": 2900,
+   "fulfillment-service": 593
+  },
+  "error_traces": 3101,
+  "error_traces_reaching_culprit": 3,
+  "culprit_spans": 61847,
+  "culprit_error_spans": 0,
+  "median_services_per_error_trace": 2,
+  "slow_ms": 6912.685961,
+  "slow_traces": 600,
+  "slow_traces_reaching_culprit": 0
+ },
+ "fault_spans": {
+  "spans": 409867,
+  "traces": 94835,
+  "error_spans_by_service": {
+   "load-generator": 9753,
+   "order-service": 2007,
+   "cart-service": 1940,
+   "fulfillment-service": 1192
+  },
+  "error_traces": 10156,
+  "error_traces_reaching_culprit": 1924,
+  "culprit_spans": 3886,
+  "culprit_error_spans": 2007,
+  "median_services_per_error_trace": 2,
+  "slow_ms": 6912.685961,
+  "slow_traces": 6400,
+  "slow_traces_reaching_culprit": 1919
+ },
+ "ambiguity": {
+  "units_ok": true,
+  "units": "timestamps look like ns; capture spans 601.5s (5,712 stamped records)",
+  "all_services": [
+   {
+    "W": 0.05,
+    "usable": 3772,
+    "edge_errors": 3772,
+    "median_concurrent": 7.0,
+    "median_services": 1.0,
+    "single_service_frac": 0.997,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   },
+   {
+    "W": 0.25,
+    "usable": 3772,
+    "edge_errors": 3772,
+    "median_concurrent": 16.0,
+    "median_services": 1.0,
+    "single_service_frac": 0.997,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   },
+   {
+    "W": 1.0,
+    "usable": 3772,
+    "edge_errors": 3772,
+    "median_concurrent": 26.0,
+    "median_services": 1.0,
+    "single_service_frac": 0.997,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   },
+   {
+    "W": 2.0,
+    "usable": 3772,
+    "edge_errors": 3772,
+    "median_concurrent": 31.0,
+    "median_services": 1.0,
+    "single_service_frac": 0.997,
+    "verdict": "STOP",
+    "why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+   }
+  ],
+  "api_gateway": [
+   {
+    "W": 0.05,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 0.25,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 1.0,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   },
+   {
+    "W": 2.0,
+    "usable": 0,
+    "edge_errors": 0,
+    "median_concurrent": 0.0,
+    "median_services": 0.0,
+    "single_service_frac": 0.0,
+    "verdict": "INDETERMINATE",
+    "why": "only 0 usable edge errors (need >=30); drive more load or run longer"
+   }
+  ]
+ },
+ "tokens_fault_window": {
+  "repl_lines_plain": 2873398,
+  "repl_lines_structured_no_trace": 2919898,
+  "repl_lines_structured": 2956527,
+  "stage0_format_window_plain": 2851559
+ },
+ "fault_minutes": [
+  {
+   "start_ns": 1792502123413652000,
+   "records": 490,
+   "errors": 317,
+   "tok_plain": 202825
+  },
+  {
+   "start_ns": 1792502183413651968,
+   "records": 552,
+   "errors": 371,
+   "tok_plain": 290030
+  },
+  {
+   "start_ns": 1792502243413651968,
+   "records": 505,
+   "errors": 316,
+   "tok_plain": 227232
+  },
+  {
+   "start_ns": 1792502303413651968,
+   "records": 600,
+   "errors": 408,
+   "tok_plain": 338376
+  },
+  {
+   "start_ns": 1792502363413651968,
+   "records": 698,
+   "errors": 474,
+   "tok_plain": 374658
+  },
+  {
+   "start_ns": 1792502423413651968,
+   "records": 412,
+   "errors": 251,
+   "tok_plain": 177976
+  },
+  {
+   "start_ns": 1792502483413651968,
+   "records": 664,
+   "errors": 449,
+   "tok_plain": 348518
+  },
+  {
+   "start_ns": 1792502543413651968,
+   "records": 696,
+   "errors": 473,
+   "tok_plain": 372016
+  },
+  {
+   "start_ns": 1792502603413651968,
+   "records": 461,
+   "errors": 282,
+   "tok_plain": 199842
+  },
+  {
+   "start_ns": 1792502663413651968,
+   "records": 632,
+   "errors": 429,
+   "tok_plain": 337120
+  }
+ ],
+ "verdict": {
+  "WS": true,
+  "S3": false,
+  "PR": false,
+  "WS_why": "3772 ERROR in fault (375.13/min) vs baseline 39.39/min",
+  "S3_why": "argmax=order-service tied=False correct=True; reach 0/395 foreign-erroring traces",
+  "PR_why": "median 1.0 services per erroring trace < 2.0: the trace arm has no cross-service evidence to read"
+ }
+}

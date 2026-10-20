@@ -1,0 +1,2184 @@
+{
+ "dataset": "rcalab",
+ "doc": "results/datasets/RCALAB_DATASET.md",
+ "captures": [
+  {
+   "name": "healthy",
+   "scenario": "healthy",
+   "path": "data/rcalab/healthy",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "3dd62c2dd8e4abe09f3f4dcd8a3ee62f51ad6e2d952d86c4bb36a2f12a79056d",
+    "meta.json": "aa47da4aac4ce3099267551796a5495133ff2ba54562d05ded70b4bb74987883",
+    "meta_raw.json": "f7d386a3f6282298c826c9466ed8505023718f3295b450c7abf7b709b33f5f7f",
+    "traces.jsonl.zst": "bb26b45a76b650fdfb8f82d46167966961055192105f60729f4f6a918bc7f8bd"
+   },
+   "windows": {
+    "baseline": [
+     1792504329735604000,
+     1792506129768109000
+    ],
+    "fault": null,
+    "recovery": null
+   },
+   "culprit_service": null,
+   "culprit_component": "none: no scenario enabled",
+   "fault_class": "none",
+   "effect_verified": "n/a (no scenario enabled)",
+   "counts": {
+    "all": {
+     "log_records": 1419,
+     "error_records": 1186,
+     "records_with_trace_id": 1238,
+     "spans": 1684708,
+     "traces": 351952,
+     "error_bearing_traces": 18882,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 1414,
+     "error_records": 1182,
+     "records_with_trace_id": 1234,
+     "spans": 1679109,
+     "traces": 350672,
+     "error_bearing_traces": 18828,
+     "root_span_ms_p99": 7765.24
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/healthy",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-01",
+   "scenario": "sc-01",
+   "path": "data/rcalab/sc-01",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "eff0b9bb868a3d855820442a59915161021243448ee96b2d7b6cc432e3c5f354",
+    "meta.json": "1458e89defbc9d2f128be978d7ff0a499552c81695e6e603952c50168720a0bc",
+    "meta_raw.json": "8664f0f30c261e53c230734268de8a2861fc82669777dce78992c00dfca47130",
+    "traces.jsonl.zst": "db9294623a1ef981b28a6fec1998b3177e8cf9f421edaca0d2714d8a6ebbc336"
+   },
+   "windows": {
+    "baseline": [
+     1792508632290449000,
+     1792508932340420000
+    ],
+    "fault": [
+     1792508933020171000,
+     1792509536446661000
+    ],
+    "recovery": [
+     1792509536446661000,
+     1792509870005177000
+    ]
+   },
+   "culprit_service": "review-service",
+   "culprit_component": "mongodb: unindexed COLLSCAN queries from a batch workload",
+   "fault_class": "db-resource",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 5896,
+     "error_records": 758,
+     "records_with_trace_id": 5772,
+     "spans": 928270,
+     "traces": 206161,
+     "error_bearing_traces": 19835,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 304,
+     "error_records": 196,
+     "records_with_trace_id": 274,
+     "spans": 264478,
+     "traces": 56650,
+     "error_bearing_traces": 3219,
+     "root_span_ms_p99": 8905.13
+    },
+    "fault": {
+     "log_records": 4691,
+     "error_records": 341,
+     "records_with_trace_id": 4631,
+     "spans": 367993,
+     "traces": 85657,
+     "error_bearing_traces": 12620,
+     "root_span_ms_p99": 10113.61
+    },
+    "recovery": {
+     "log_records": 893,
+     "error_records": 216,
+     "records_with_trace_id": 860,
+     "spans": 288813,
+     "traces": 62314,
+     "error_bearing_traces": 3884,
+     "root_span_ms_p99": 9748.91
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-01",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-02",
+   "scenario": "sc-02",
+   "path": "data/rcalab/sc-02",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "e27b518c43c43334ccfb8620665dae3a3f8591ca1221dba437cbc8ba27b6956a",
+    "meta.json": "f5a6ec24fdb11503b0271f4c61cbfd213dc7fada679b45f56e96d167df2c97bd",
+    "meta_raw.json": "56e887a93a6f7ba01bf1863a467c2da6636a2cc7542bd9560d1f9f7c422110db",
+    "traces.jsonl.zst": "4d6b04613d955ef4d1d09b029186e30f13656464d0aa5ae723c5b73e9ca46944"
+   },
+   "windows": {
+    "baseline": [
+     1792519872586966000,
+     1792520172669883000
+    ],
+    "fault": [
+     1792520173455099000,
+     1792520477992032000
+    ],
+    "recovery": [
+     1792520477992032000,
+     1792520804937458000
+    ]
+   },
+   "culprit_service": "review-service",
+   "culprit_component": "mongodb: repeated forced primary step-down",
+   "fault_class": "db-availability",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 8051,
+     "error_records": 598,
+     "records_with_trace_id": 7957,
+     "spans": 647579,
+     "traces": 149593,
+     "error_bearing_traces": 19169,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2679,
+     "error_records": 191,
+     "records_with_trace_id": 2649,
+     "spans": 221082,
+     "traces": 49964,
+     "error_bearing_traces": 4609,
+     "root_span_ms_p99": 10001.74
+    },
+    "fault": {
+     "log_records": 2558,
+     "error_records": 190,
+     "records_with_trace_id": 2527,
+     "spans": 197633,
+     "traces": 46817,
+     "error_bearing_traces": 7475,
+     "root_span_ms_p99": 10004.05
+    },
+    "recovery": {
+     "log_records": 2746,
+     "error_records": 211,
+     "records_with_trace_id": 2713,
+     "spans": 222899,
+     "traces": 51842,
+     "error_bearing_traces": 6898,
+     "root_span_ms_p99": 10001.67
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-02",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-03",
+   "scenario": "sc-03",
+   "path": "data/rcalab/sc-03",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "98843a45611592b8a1e39ea6b66345fcd485ef1f2ad28909deb1596c5d25e71a",
+    "meta.json": "23fd2da5037f7a5441051f03ab56177853aa629f262658b28661a5a4a9c1a237",
+    "meta_raw.json": "30b9f07ab56c3ac100875d3a768900731221c9a57d3447d82ba7d87e86c70c25",
+    "traces.jsonl.zst": "d452238fddd5e08a4fd75cbb308fefaf75fbbf8300e9956489b7c8f755346381"
+   },
+   "windows": {
+    "baseline": [
+     1792506151017762000,
+     1792506451082906000
+    ],
+    "fault": [
+     1792506451748567000,
+     1792507056305401000
+    ],
+    "recovery": [
+     1792507056305401000,
+     1792507358538141000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "mysql: 'analytics-reporting' batch queries saturating PXC CPU",
+   "fault_class": "db-resource",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 7441,
+     "error_records": 795,
+     "records_with_trace_id": 7319,
+     "spans": 1080070,
+     "traces": 229664,
+     "error_bearing_traces": 12880,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 242,
+     "error_records": 197,
+     "records_with_trace_id": 212,
+     "spans": 275738,
+     "traces": 58027,
+     "error_bearing_traces": 3202,
+     "root_span_ms_p99": 8117.91
+    },
+    "fault": {
+     "log_records": 6778,
+     "error_records": 395,
+     "records_with_trace_id": 6718,
+     "spans": 522442,
+     "traces": 111907,
+     "error_bearing_traces": 6378,
+     "root_span_ms_p99": 8206.56
+    },
+    "recovery": {
+     "log_records": 415,
+     "error_records": 199,
+     "records_with_trace_id": 385,
+     "spans": 274522,
+     "traces": 58042,
+     "error_bearing_traces": 3204,
+     "root_span_ms_p99": 8364.69
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-03",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-04",
+   "scenario": "sc-04",
+   "path": "data/rcalab/sc-04",
+   "status": "ok",
+   "format": "legacy",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "8cda1e4fc53631de0752aef35a7dc892f97b12d53d73ab741130f16022362620",
+    "meta.json": "0c34e5ba63c867d89439d2aa7caf936a28c3cf33365560e97a9a17b675434e57",
+    "meta_raw.json": "2aa8de567eeafdea970eef4a96d09f73781dc8ec99d80451e2e12c00aa2e74e7",
+    "traces.jsonl.zst": "378bbd5d7480ceafa1c5f610fe0df20d450fc2b416e323c357222c7e0bd41847"
+   },
+   "windows": {
+    "baseline": [
+     1792487184028472000,
+     1792487364264743000
+    ],
+    "fault": [
+     1792487365417558000,
+     1792487665514621000
+    ],
+    "recovery": null
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "mysql: stalled transaction holding InnoDB row locks on orders",
+   "fault_class": "db-lock",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 3182,
+     "error_records": 2100,
+     "records_with_trace_id": 3021,
+     "spans": 601086,
+     "traces": 111644,
+     "error_bearing_traces": 7532,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 135,
+     "error_records": 117,
+     "records_with_trace_id": 117,
+     "spans": 236374,
+     "traces": 42629,
+     "error_bearing_traces": 1928,
+     "root_span_ms_p99": 2025.12
+    },
+    "fault": {
+     "log_records": 2864,
+     "error_records": 1900,
+     "records_with_trace_id": 2784,
+     "spans": 321783,
+     "traces": 60832,
+     "error_bearing_traces": 5011,
+     "root_span_ms_p99": 10000.79
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-04",
+   "legacy_note": "short format: 180 s baseline, 300 s fault, NO recovery window; captured with infra/rcalab_capture_scenario.sh before the dataset spec; cluster/ snapshot taken AFTER the capture"
+  },
+  {
+   "name": "sc-04_r2",
+   "scenario": "sc-04",
+   "path": "data/rcalab/sc-04_r2",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "eb582b625db198cfc32429e1d7c360582353aad85b7cc28fb64d208846fd6dd6",
+    "meta.json": "dabc225736bd75a2a5236184eadb3338b6e1d824305deebc083137e90482d16d",
+    "meta_raw.json": "0cfd9f211ade885ca964e381641eff02c37770dc2d8b8f992d356f73da3d3ad5",
+    "traces.jsonl.zst": "13923a1a736ef2c0105c38ddc3e652558eec28b9b505e94f0e30ca9666f3eea6"
+   },
+   "windows": {
+    "baseline": [
+     1792501822680527000,
+     1792502122727491000
+    ],
+    "fault": [
+     1792502123413652000,
+     1792502726716795000
+    ],
+    "recovery": [
+     1792502726716795000,
+     1792503053749616000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "mysql: stalled transaction holding InnoDB row locks on orders",
+   "fault_class": "db-lock",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 6266,
+     "error_records": 4189,
+     "records_with_trace_id": 5958,
+     "spans": 1018550,
+     "traces": 220052,
+     "error_bearing_traces": 17010,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 235,
+     "error_records": 197,
+     "records_with_trace_id": 205,
+     "spans": 294121,
+     "traces": 60059,
+     "error_bearing_traces": 3101,
+     "root_span_ms_p99": 6919.93
+    },
+    "fault": {
+     "log_records": 5712,
+     "error_records": 3772,
+     "records_with_trace_id": 5513,
+     "spans": 409867,
+     "traces": 94835,
+     "error_bearing_traces": 10156,
+     "root_span_ms_p99": 10001.23
+    },
+    "recovery": {
+     "log_records": 314,
+     "error_records": 215,
+     "records_with_trace_id": 235,
+     "spans": 306461,
+     "traces": 63366,
+     "error_bearing_traces": 3662,
+     "root_span_ms_p99": 7727.84
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-04_r2",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-05",
+   "scenario": "sc-05",
+   "path": "data/rcalab/sc-05",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "eb9ee505b81257a7e9b6dd5b017d662044ebbd21051b3251b0dc6ba3a5c74716",
+    "meta.json": "308539c7dffecc9be3d2390b75693f4048aba97ac0bd097cecf0d9ef23e8cd8a",
+    "meta_raw.json": "1da5b598edf28305c06d9db6f39cd9e1b4c181843a91deac19ccdeb7e2f59254",
+    "traces.jsonl.zst": "b5098c0ad8e9536a390d38d132b738e35a56f988532b4aba8b97b2cdafac8ee6"
+   },
+   "windows": {
+    "baseline": [
+     1792507393051848000,
+     1792507693090681000
+    ],
+    "fault": [
+     1792507693667064000,
+     1792508297049417000
+    ],
+    "recovery": [
+     1792508297049417000,
+     1792508599288417000
+    ]
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "postgres: 'analytics-reporting' batch queries on products",
+   "fault_class": "db-resource",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 1099,
+     "error_records": 795,
+     "records_with_trace_id": 978,
+     "spans": 1099999,
+     "traces": 232797,
+     "error_bearing_traces": 12765,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 355,
+     "error_records": 197,
+     "records_with_trace_id": 325,
+     "spans": 272685,
+     "traces": 57569,
+     "error_bearing_traces": 3184,
+     "root_span_ms_p99": 8285.03
+    },
+    "fault": {
+     "log_records": 489,
+     "error_records": 396,
+     "records_with_trace_id": 429,
+     "spans": 549679,
+     "traces": 116038,
+     "error_bearing_traces": 6330,
+     "root_span_ms_p99": 8255.89
+    },
+    "recovery": {
+     "log_records": 250,
+     "error_records": 198,
+     "records_with_trace_id": 220,
+     "spans": 270965,
+     "traces": 57702,
+     "error_bearing_traces": 3172,
+     "root_span_ms_p99": 8541.62
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-05",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-06",
+   "scenario": "sc-06",
+   "path": "data/rcalab/sc-06",
+   "status": "ok",
+   "format": "legacy",
+   "files": {
+    "logs": "logs.jsonl",
+    "traces": "traces.jsonl.gz"
+   },
+   "sha256": {
+    "logs.jsonl": "b110c41eb2e3f95bd791365c304817067a2eeb79609a750d7dc0bb1ebcc35aa7",
+    "meta.json": "b6345fad373ddf57cf2d496cb88761346cec91775a6dead11e638b08101e3809",
+    "meta_raw.json": "2606df845cd96f76be678094b077c78bd85802e96acf5d06a8e57361543a0561",
+    "traces.jsonl.gz": "8cc59dea3ab8284934c79ffdbad362695d2b9e47b6b4c10c389a9b83d5d98b49"
+   },
+   "windows": {
+    "baseline": [
+     1792486674961010000,
+     1792486855051822000
+    ],
+    "fault": [
+     1792486855251035000,
+     1792487155331205000
+    ],
+    "recovery": null
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "postgres: stalled migration holding ACCESS EXCLUSIVE on products",
+   "fault_class": "db-lock",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 371,
+     "error_records": 321,
+     "records_with_trace_id": 321,
+     "spans": 621966,
+     "traces": 109497,
+     "error_bearing_traces": 5885,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 136,
+     "error_records": 118,
+     "records_with_trace_id": 118,
+     "spans": 240760,
+     "traces": 43174,
+     "error_bearing_traces": 1935,
+     "root_span_ms_p99": 69.33
+    },
+    "fault": {
+     "log_records": 229,
+     "error_records": 199,
+     "records_with_trace_id": 199,
+     "spans": 361030,
+     "traces": 62638,
+     "error_bearing_traces": 3803,
+     "root_span_ms_p99": 10000.89
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-06",
+   "legacy_note": "short format: 180 s baseline, 300 s fault, NO recovery window; traces gzip -6, logs uncompressed (kept as first written); two short diagnostic enables of sc-06 ended ~1 min before the baseline began; cluster/ snapshot taken AFTER the capture. REPAIRED 2026-10-20: the trace file began with 588,457,823 NUL bytes (host-side truncation under a running writer), stripped; the hole ended at a line boundary, so no record was lost."
+  },
+  {
+   "name": "sc-06_r2",
+   "scenario": "sc-06",
+   "path": "data/rcalab/sc-06_r2",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "269ad06d7c01151c56d2c89d2f13d3c0593013c35dc1f68f9f5dd6f8e05e4bcd",
+    "meta.json": "606f90b2bf4e1c74f6fb81fcf00bdd1f344580b58e9d9a71a39558fa70a16354",
+    "meta_raw.json": "b89e36b29689939c27b1301cba3dabdbbfd5f7d63f6ffe3d511b50fc24b2ab7d",
+    "traces.jsonl.zst": "a28ed298febd1dc4fc669bd10d6921f13e082e28afd47f5b4b3ff58dbc3b9921"
+   },
+   "windows": {
+    "baseline": [
+     1792503093318834000,
+     1792503393366482000
+    ],
+    "fault": [
+     1792503394188502000,
+     1792503998447866000
+    ],
+    "recovery": [
+     1792503998447866000,
+     1792504298594206000
+    ]
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "postgres: stalled migration holding ACCESS EXCLUSIVE on products",
+   "fault_class": "db-lock",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 960,
+     "error_records": 797,
+     "records_with_trace_id": 835,
+     "spans": 1008135,
+     "traces": 209153,
+     "error_bearing_traces": 14017,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 243,
+     "error_records": 197,
+     "records_with_trace_id": 211,
+     "spans": 288099,
+     "traces": 59518,
+     "error_bearing_traces": 3099,
+     "root_span_ms_p99": 7394.67
+    },
+    "fault": {
+     "log_records": 479,
+     "error_records": 397,
+     "records_with_trace_id": 417,
+     "spans": 430500,
+     "traces": 89359,
+     "error_bearing_traces": 7718,
+     "root_span_ms_p99": 10001.31
+    },
+    "recovery": {
+     "log_records": 231,
+     "error_records": 197,
+     "records_with_trace_id": 201,
+     "spans": 281907,
+     "traces": 58696,
+     "error_bearing_traces": 3133,
+     "root_span_ms_p99": 7919.76
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-06_r2",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-07",
+   "scenario": "sc-07",
+   "path": "data/rcalab/sc-07",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "96e2a23f0506d0b51fa3a511585b92ccd7669cae6e43354f732e301b8a510e49",
+    "meta.json": "eb5c4eb49bd80093f19fe3b8faad305decc93db033f1d9d2cc58505402a1c2fb",
+    "meta_raw.json": "c942aa1d39685d50a76c72b04c4a578d271994e907bb253f60ced69ffc74071c",
+    "traces.jsonl.zst": "bbd680d59a529632363d959753f61c4da7d44af504795a613cfd34e0e4ddf756"
+   },
+   "windows": {
+    "baseline": [
+     1792494968079900000,
+     1792495268160193000
+    ],
+    "fault": [
+     1792495268869366000,
+     1792496172804496000
+    ],
+    "recovery": [
+     1792496172804496000,
+     1792496475067702000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "order-service 1.3.0 bad deploy: allocation regression / GC pressure",
+   "fault_class": "degradation",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 1955,
+     "error_records": 1065,
+     "records_with_trace_id": 1510,
+     "spans": 1410708,
+     "traces": 288841,
+     "error_bearing_traces": 18024,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 227,
+     "error_records": 196,
+     "records_with_trace_id": 197,
+     "spans": 330293,
+     "traces": 64072,
+     "error_bearing_traces": 3078,
+     "root_span_ms_p99": 5461.06
+    },
+    "fault": {
+     "log_records": 1398,
+     "error_records": 678,
+     "records_with_trace_id": 1066,
+     "spans": 789072,
+     "traces": 164954,
+     "error_bearing_traces": 11602,
+     "root_span_ms_p99": 10000.45
+    },
+    "recovery": {
+     "log_records": 323,
+     "error_records": 186,
+     "records_with_trace_id": 242,
+     "spans": 283368,
+     "traces": 58063,
+     "error_bearing_traces": 3250,
+     "root_span_ms_p99": 7801.72
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-07",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-08",
+   "scenario": "sc-08",
+   "path": "data/rcalab/sc-08",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "81d8dbf95a25208b41259b39b4ddfb673d372defb3591f4cf849d46c72ade35d",
+    "meta.json": "08fb6b6a9998920b62c9a82538696df37f0f64b6a816e7127f564b3f99187346",
+    "meta_raw.json": "5b5e4a4044db3777c0f927edef76f3a81b6f675bd977a6dcf50bc52bf3ad3cc2",
+    "traces.jsonl.zst": "920ea870214e0d761551fffce576e4d6689671194955534f6158527c85d80ee5"
+   },
+   "windows": {
+    "baseline": [
+     1792496516734989000,
+     1792496816817480000
+    ],
+    "fault": [
+     1792496817547565000,
+     1792497722039605000
+    ],
+    "recovery": [
+     1792497722039605000,
+     1792498024506519000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "order-service 1.4.0 bad deploy: slow leak of small objects",
+   "fault_class": "degradation",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 2057,
+     "error_records": 1016,
+     "records_with_trace_id": 1762,
+     "spans": 1424583,
+     "traces": 292485,
+     "error_bearing_traces": 16691,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 239,
+     "error_records": 194,
+     "records_with_trace_id": 207,
+     "spans": 315383,
+     "traces": 62156,
+     "error_bearing_traces": 3168,
+     "root_span_ms_p99": 6322.96
+    },
+    "fault": {
+     "log_records": 1285,
+     "error_records": 627,
+     "records_with_trace_id": 1101,
+     "spans": 820405,
+     "traces": 170483,
+     "error_bearing_traces": 10205,
+     "root_span_ms_p99": 8154.62
+    },
+    "recovery": {
+     "log_records": 523,
+     "error_records": 189,
+     "records_with_trace_id": 446,
+     "spans": 280876,
+     "traces": 58162,
+     "error_bearing_traces": 3247,
+     "root_span_ms_p99": 7717.36
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-08",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-09",
+   "scenario": "sc-09",
+   "path": "data/rcalab/sc-09",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "dbd1b45ec848fce47d7da2e174dbb01c765978823bc560557a5451e97eb158c4",
+    "meta.json": "92788d08b4b2342ef28d415bd366e7ead7d194e106d4dda205559d70b13efed5",
+    "meta_raw.json": "38a11a549e2b22ade000593f770bf9bd5a9cd6d73e585b155f4c127c08aea5d0",
+    "traces.jsonl.zst": "3a691c93c898563b6c44c774fca64fd4620e72ff22d04d4e160f1df63baa8dea"
+   },
+   "windows": {
+    "baseline": [
+     1792493720132091000,
+     1792494020240738000
+    ],
+    "fault": [
+     1792494021351513000,
+     1792494625893908000
+    ],
+    "recovery": [
+     1792494625893908000,
+     1792494928105416000
+    ]
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "product-catalog 1.1.0 bad deploy: GC (allocation) pressure",
+   "fault_class": "degradation",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 975,
+     "error_records": 763,
+     "records_with_trace_id": 850,
+     "spans": 1311849,
+     "traces": 253912,
+     "error_bearing_traces": 12562,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 247,
+     "error_records": 190,
+     "records_with_trace_id": 217,
+     "spans": 330368,
+     "traces": 63625,
+     "error_bearing_traces": 3163,
+     "root_span_ms_p99": 6042.06
+    },
+    "fault": {
+     "log_records": 468,
+     "error_records": 380,
+     "records_with_trace_id": 406,
+     "spans": 654233,
+     "traces": 126484,
+     "error_bearing_traces": 6313,
+     "root_span_ms_p99": 6343.91
+    },
+    "recovery": {
+     "log_records": 255,
+     "error_records": 188,
+     "records_with_trace_id": 222,
+     "spans": 318214,
+     "traces": 62117,
+     "error_bearing_traces": 3001,
+     "root_span_ms_p99": 6176.26
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-09",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-10",
+   "scenario": "sc-10",
+   "path": "data/rcalab/sc-10",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "70e98aefa4120bff38239c2d38670f0b719123f4e5d72a09dad649668808f739",
+    "meta.json": "e8b21e53b8420c166a7108cf93788fc9c338a316cee0151b21b8e2c2bc25f932",
+    "meta_raw.json": "1eec56316f30a885858c421ab06e26f3d3ea4e2c10a47e8c1931cf875c446165",
+    "traces.jsonl.zst": "29a87ce141d53eee7ce841861c2dc7f139769c9ee4f077fc23bca0e05a6ad216"
+   },
+   "windows": {
+    "baseline": [
+     1792492158448061000,
+     1792492458567654000
+    ],
+    "fault": [
+     1792492462758970000,
+     1792493364614180000
+    ],
+    "recovery": [
+     1792493364614180000,
+     1792493666929579000
+    ]
+   },
+   "culprit_service": "recommendation-service",
+   "culprit_component": "recommendation-service 1.1.0 memory leak -> repeated OOMKill",
+   "fault_class": "crash",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 6931,
+     "error_records": 6486,
+     "records_with_trace_id": 6772,
+     "spans": 1578069,
+     "traces": 302573,
+     "error_bearing_traces": 26980,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 231,
+     "error_records": 194,
+     "records_with_trace_id": 201,
+     "spans": 312361,
+     "traces": 61853,
+     "error_bearing_traces": 3189,
+     "root_span_ms_p99": 6401.84
+    },
+    "fault": {
+     "log_records": 5757,
+     "error_records": 5445,
+     "records_with_trace_id": 5660,
+     "spans": 942216,
+     "traces": 178226,
+     "error_bearing_traces": 19170,
+     "root_span_ms_p99": 6530.3
+    },
+    "recovery": {
+     "log_records": 935,
+     "error_records": 840,
+     "records_with_trace_id": 903,
+     "spans": 312941,
+     "traces": 60398,
+     "error_bearing_traces": 4505,
+     "root_span_ms_p99": 6554.07
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-10",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-10_full",
+   "scenario": "sc-10",
+   "path": "data/rcalab/sc-10_full",
+   "status": "ok",
+   "format": "legacy-full",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "SHA256SUMS.main_session": "aef2712bd67a77f48dd8969a8f80ab42803eb4c67b2d26c4bfde9f191ceef6cc",
+    "logs.jsonl.zst": "f8ca84aaa4a21c18317c2789bab78989df6a008f7195655960693254346d2adb",
+    "meta.json": "b2da15b61b86b8c101593a04e5c4ae09e49124f1957334dabf1d5d868321814b",
+    "meta_raw.json": "2a29217356084fba6ca18e9f3c37a73fef651191fd8eb3c4dd088eeceb6a1479",
+    "traces.jsonl.zst": "9ff06778221e5e62b876bca09a866a8bcfbf457e4b4e54982047f9174ede6875"
+   },
+   "windows": {
+    "baseline": [
+     1789218745163509757,
+     1789394384147707904
+    ],
+    "fault": [
+     1789216348293516594,
+     1789218145163509757
+    ],
+    "recovery": [
+     1789218145163509757,
+     1789218445163509757
+    ]
+   },
+   "culprit_service": "recommendation-service",
+   "culprit_component": "recommendation-service 1.1.0 memory leak -> repeated OOMKill",
+   "fault_class": "crash",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 91372,
+     "error_records": 22719,
+     "records_with_trace_id": 83104,
+     "spans": 28254701,
+     "traces": 11968545,
+     "error_bearing_traces": 7418323,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 65276,
+     "error_records": 4,
+     "records_with_trace_id": 60376,
+     "spans": 20440002,
+     "traces": 5499675,
+     "error_bearing_traces": 1236833,
+     "root_span_ms_p99": null
+    },
+    "fault": {
+     "log_records": 14791,
+     "error_records": 14602,
+     "records_with_trace_id": 14602,
+     "spans": 1130497,
+     "traces": 232186,
+     "error_bearing_traces": 52189,
+     "root_span_ms_p99": null
+    },
+    "recovery": {
+     "log_records": 31,
+     "error_records": 1,
+     "records_with_trace_id": 1,
+     "spans": 213203,
+     "traces": 46102,
+     "error_bearing_traces": 5069,
+     "root_span_ms_p99": null
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-10_full",
+   "legacy_note": "Full output of the original host collector 2026-09-12T12:32Z..2026-09-15T17:15Z (~77 h), recompressed to zstd by the main session (its SHA256SUMS kept as SHA256SUMS.main_session). Window bounds DERIVED from the data (see meta_raw.json derivation): fault = first..last product-catalog 'recommendations rpc failed'; baseline = healthy stretch AFTER recovery, not before the fault. An unexplained ~10 min error burst on 2026-09-14T14:09Z (payment-service DB errors, cart-service exceptions) is excluded. Cluster config was not recorded at the time and that cluster no longer exists: cluster fields are unknown. Distinct-trace counts use 64-bit trace-id prefixes; no latency percentiles (multi-day)."
+  },
+  {
+   "name": "sc-10_partial",
+   "scenario": "sc-10",
+   "path": "data/rcalab",
+   "status": "ok",
+   "format": "legacy-partial",
+   "files": {
+    "logs": "sc10_logs.jsonl",
+    "traces": "sc10_traces_sample.jsonl"
+   },
+   "sha256": {
+    "sc10_logs.jsonl": "b9474f076c32d89e3ff0333423ee597d6b6e0611a954db16605abcdbd70d07aa",
+    "sc10_traces_sample.jsonl": "33ad60aebec464105920211dfd615e4dfa214a2f789f58f735d50e27b04736b0"
+   },
+   "windows": {
+    "baseline": null,
+    "fault": [
+     1789216348293516594,
+     1789216705038000000
+    ],
+    "recovery": null
+   },
+   "culprit_service": "recommendation-service",
+   "culprit_component": "recommendation-service 1.1.0 memory leak -> repeated OOMKill",
+   "fault_class": "crash",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 788,
+     "error_records": 760,
+     "records_with_trace_id": 760,
+     "spans": 92370,
+     "traces": 18974,
+     "error_bearing_traces": 3617,
+     "root_span_ms_p99": null
+    },
+    "fault": {
+     "log_records": 785,
+     "error_records": 760,
+     "records_with_trace_id": 760,
+     "spans": 92370,
+     "traces": 18974,
+     "error_bearing_traces": 3617,
+     "root_span_ms_p99": 10001.09
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-10_partial",
+   "legacy_note": "The OLDER partial copy of the sc-10 run, used by results/SC10_CRASH_FAULT.md and talk/NUMBERS.md claim 9; a strict subset of sc-10_full (all 788 log records are in it). Logs cover 2026-09-12T12:32:01-12:36:03Z, the span sample 12:36:11-12:38:25Z: the two files cover DISJOINT intervals. The trace file is cut at exactly 60,000,000 bytes (last line unparseable). Fault window = this copy's coverage intersected with sc-10_full's derived fault window. Not backed up separately: sc-10_full contains it."
+  },
+  {
+   "name": "sc-11",
+   "scenario": "sc-11",
+   "path": "data/rcalab/sc-11",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "3deb8ac9d4d6c3317887ef166e77a993f6fa704673e246dfb78d25afb39d7579",
+    "meta.json": "a9f735ab34609a9af9b88e05d4444ad3adc02174c5ece547d2f06e6540a5b05d",
+    "meta_raw.json": "e299acd33619f2248074d7efac3afb94bc6d1dd9b68c839f08b8e18b1b957100",
+    "traces.jsonl.zst": "8e5305b428b372a374788bd152127e68cb4df385f896eae7de5e6db992509d04"
+   },
+   "windows": {
+    "baseline": [
+     1792488584130352000,
+     1792488884345658000
+    ],
+    "fault": [
+     1792488885343932000,
+     1792489489792421000
+    ],
+    "recovery": [
+     1792489489792421000,
+     1792489789953205000
+    ]
+   },
+   "culprit_service": "review-service",
+   "culprit_component": "review-service 1.2.0 bad deploy: synchronous CPU loop blocks event loop",
+   "fault_class": "degradation",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 941,
+     "error_records": 802,
+     "records_with_trace_id": 806,
+     "spans": 1235081,
+     "traces": 250871,
+     "error_bearing_traces": 19806,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 230,
+     "error_records": 198,
+     "records_with_trace_id": 200,
+     "spans": 403637,
+     "traces": 72196,
+     "error_bearing_traces": 3217,
+     "root_span_ms_p99": 103.71
+    },
+    "fault": {
+     "log_records": 472,
+     "error_records": 400,
+     "records_with_trace_id": 402,
+     "spans": 433655,
+     "traces": 105928,
+     "error_bearing_traces": 12327,
+     "root_span_ms_p99": 10000.97
+    },
+    "recovery": {
+     "log_records": 233,
+     "error_records": 199,
+     "records_with_trace_id": 199,
+     "spans": 388367,
+     "traces": 71030,
+     "error_bearing_traces": 4200,
+     "root_span_ms_p99": 176.23
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-11",
+   "legacy_note": "REPAIRED 2026-10-20: (1) the driver's zstd read the live trace file while the collector still appended to it, so the frame was left unterminated; it was salvaged by streaming decompression, losing the last ~140 KB, which lies after recovery_end (+4.7 s); (2) the live file began with 1,156,961,017 NUL bytes (host-side truncation under a running writer), stripped; the first batch they had swallowed was recovered. Logs file unaffected. The driver now stops the collector around truncation and before compressing."
+  },
+  {
+   "name": "sc-12",
+   "scenario": "sc-12",
+   "path": "data/rcalab/sc-12",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "a30329a6f9381133006c6490a963fdf3b49a0619260d323c2d93dd5ee4555553",
+    "meta.json": "8749faf7c50a3f4505728131cc4b6ca106677669f6718e82f0f12bfffcabd985",
+    "meta_raw.json": "1fc13bfc95e4029145fbb26ac32b026a5281b29c318aa4cbe1c9008f816165cd",
+    "traces.jsonl.zst": "a438d8853842a906c588a3d71e24c9d446025df1631b6aa1460d3ddd4a7f6e25"
+   },
+   "windows": {
+    "baseline": [
+     1792498072372501000,
+     1792498372421584000
+    ],
+    "fault": [
+     1792498373267952000,
+     1792498976158939000
+    ],
+    "recovery": [
+     1792498976158939000,
+     1792499305517208000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "co-located 'video-transcoder' batch workload starving node CPU",
+   "fault_class": "infra-contention",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 1731,
+     "error_records": 640,
+     "records_with_trace_id": 1601,
+     "spans": 1203125,
+     "traces": 248157,
+     "error_bearing_traces": 12709,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 275,
+     "error_records": 191,
+     "records_with_trace_id": 243,
+     "spans": 288615,
+     "traces": 59329,
+     "error_bearing_traces": 3176,
+     "root_span_ms_p99": 7189.09
+    },
+    "fault": {
+     "log_records": 1159,
+     "error_records": 234,
+     "records_with_trace_id": 1095,
+     "spans": 580879,
+     "traces": 121292,
+     "error_bearing_traces": 6029,
+     "root_span_ms_p99": 6817.03
+    },
+    "recovery": {
+     "log_records": 290,
+     "error_records": 209,
+     "records_with_trace_id": 257,
+     "spans": 325772,
+     "traces": 66213,
+     "error_bearing_traces": 3432,
+     "root_span_ms_p99": 6509.23
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-12",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-13",
+   "scenario": "sc-13",
+   "path": "data/rcalab/sc-13",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "e639216dec590232c5deec46d094fbcc717aec11edac6d38bb063e9844db11dc",
+    "meta.json": "6f64d7dcc7060a20ac910e976249c4703f279a340172abb17558a8680d2876d2",
+    "meta_raw.json": "45c99d487f5bde02919695c07c5fdae196be806a142ad64b30694561e14386da",
+    "traces.jsonl.zst": "15c0dd3d43781c609f051605b2cdce6e8c0cb865d13f4e9981cb4a4910a02ef7"
+   },
+   "windows": {
+    "baseline": [
+     1792499343400462000,
+     1792499643451029000
+    ],
+    "fault": [
+     1792499644150120000,
+     1792500244407689000
+    ],
+    "recovery": [
+     1792500244407689000,
+     1792500544600071000
+    ]
+   },
+   "culprit_service": "load-generator",
+   "culprit_component": "traffic spike: load-generator scaled to 5 replicas",
+   "fault_class": "load",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 5259,
+     "error_records": 786,
+     "records_with_trace_id": 4866,
+     "spans": 1223878,
+     "traces": 317410,
+     "error_bearing_traces": 99836,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 237,
+     "error_records": 195,
+     "records_with_trace_id": 207,
+     "spans": 291381,
+     "traces": 59599,
+     "error_bearing_traces": 3035,
+     "root_span_ms_p99": 7049.03
+    },
+    "fault": {
+     "log_records": 4688,
+     "error_records": 387,
+     "records_with_trace_id": 4356,
+     "spans": 657506,
+     "traces": 202399,
+     "error_bearing_traces": 91403,
+     "root_span_ms_p99": 10006.76
+    },
+    "recovery": {
+     "log_records": 327,
+     "error_records": 198,
+     "records_with_trace_id": 297,
+     "spans": 267441,
+     "traces": 55101,
+     "error_bearing_traces": 5297,
+     "root_span_ms_p99": 10000.88
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-13",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-14",
+   "scenario": "sc-14",
+   "path": "data/rcalab/sc-14",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "a2a42f6e65a5b29de024c15d16a8d23a3d66e1750eec44c32be590a676ed73e1",
+    "meta.json": "aeb78dc8eab0829057fc4b3a1d7069d6acff41943b4653d5ac28b42665efac9e",
+    "meta_raw.json": "6a5523fb00ddb246057edcb1a58f44519a5f67272f1460ab65dc591554126090",
+    "traces.jsonl.zst": "ade36094f3ed7e6dff67daa867bf471c0ee19f589e25551d414d06fedd31875f"
+   },
+   "windows": {
+    "baseline": [
+     1792500581643619000,
+     1792500881688939000
+    ],
+    "fault": [
+     1792500882295143000,
+     1792501485815234000
+    ],
+    "recovery": [
+     1792501485815234000,
+     1792501788002494000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "network path to cluster DNS: +500ms per lookup for all app services",
+   "fault_class": "network",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 920,
+     "error_records": 783,
+     "records_with_trace_id": 799,
+     "spans": 1196059,
+     "traces": 243596,
+     "error_bearing_traces": 12629,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 233,
+     "error_records": 197,
+     "records_with_trace_id": 203,
+     "spans": 300046,
+     "traces": 60674,
+     "error_bearing_traces": 3142,
+     "root_span_ms_p99": 6836.01
+    },
+    "fault": {
+     "log_records": 451,
+     "error_records": 383,
+     "records_with_trace_id": 391,
+     "spans": 596677,
+     "traces": 121231,
+     "error_bearing_traces": 6272,
+     "root_span_ms_p99": 7060.89
+    },
+    "recovery": {
+     "log_records": 230,
+     "error_records": 198,
+     "records_with_trace_id": 200,
+     "spans": 290282,
+     "traces": 59806,
+     "error_bearing_traces": 3123,
+     "root_span_ms_p99": 7223.83
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-14",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-15",
+   "scenario": "sc-15",
+   "path": "data/rcalab/sc-15",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "64cb62cbaddbeef6c9f25ed0f0bcbff933f121cea82e4a1d585f777d3a847993",
+    "meta.json": "ea5a6b4457a56f613372d934de7c25f69c326cc9f69815c43a89491ddd894e20",
+    "meta_raw.json": "ccfb28834d3794d73782d9e0e95744076d3a3e1c7435e57aaccd1a5e905d5786",
+    "traces.jsonl.zst": "191747a6468fbc9c29f097cbb9177f1c7d3a45bdda03aee3f4c6e0b68d4d6a44"
+   },
+   "windows": {
+    "baseline": [
+     1792490886347645000,
+     1792491186412783000
+    ],
+    "fault": [
+     1792491187126649000,
+     1792491790008988000
+    ],
+    "recovery": [
+     1792491790008988000,
+     1792492090223831000
+    ]
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "network: +200ms (+-50ms) on packets arriving at product-catalog",
+   "fault_class": "network",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 939,
+     "error_records": 792,
+     "records_with_trace_id": 817,
+     "spans": 1484112,
+     "traces": 278891,
+     "error_bearing_traces": 12772,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 225,
+     "error_records": 195,
+     "records_with_trace_id": 195,
+     "spans": 376262,
+     "traces": 68916,
+     "error_bearing_traces": 3166,
+     "root_span_ms_p99": 4732.27
+    },
+    "fault": {
+     "log_records": 477,
+     "error_records": 396,
+     "records_with_trace_id": 417,
+     "spans": 773028,
+     "traces": 140319,
+     "error_bearing_traces": 6398,
+     "root_span_ms_p99": 3981.25
+    },
+    "recovery": {
+     "log_records": 229,
+     "error_records": 195,
+     "records_with_trace_id": 199,
+     "spans": 324171,
+     "traces": 67305,
+     "error_bearing_traces": 3070,
+     "root_span_ms_p99": 6160.26
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-15",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-19",
+   "scenario": "sc-19",
+   "path": "data/rcalab/sc-19",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "ccff98545477ab0f76b9714ec8cd34d135b97e1d06580e40c34151afecf00658",
+    "meta.json": "985b57721e1fd670d47fb1669d4f17dd3c55d2090ed6262827ed1bc06f08d432",
+    "meta_raw.json": "8003f64b9f695a329f7b6532d4ebafc89d15348f826a824c607283e64cf59e70",
+    "traces.jsonl.zst": "5369670a505ce1dc632e1b2221ef7e5d78aaa2cc4dc700d67646db60b1b4a65a"
+   },
+   "windows": {
+    "baseline": [
+     1792518634330511000,
+     1792518934413949000
+    ],
+    "fault": [
+     1792518935154808000,
+     1792519535423594000
+    ],
+    "recovery": [
+     1792519535423594000,
+     1792519837719873000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "mysql (Galera): two batch writers conflicting on one row across nodes",
+   "fault_class": "db-internal",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 11762,
+     "error_records": 787,
+     "records_with_trace_id": 11641,
+     "spans": 925068,
+     "traces": 206526,
+     "error_bearing_traces": 15910,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 3032,
+     "error_records": 196,
+     "records_with_trace_id": 3002,
+     "spans": 235667,
+     "traces": 52186,
+     "error_bearing_traces": 3576,
+     "root_span_ms_p99": 10000.14
+    },
+    "fault": {
+     "log_records": 5815,
+     "error_records": 389,
+     "records_with_trace_id": 5755,
+     "spans": 456132,
+     "traces": 101993,
+     "error_bearing_traces": 7923,
+     "root_span_ms_p99": 10001.04
+    },
+    "recovery": {
+     "log_records": 2842,
+     "error_records": 196,
+     "records_with_trace_id": 2812,
+     "spans": 226931,
+     "traces": 51034,
+     "error_bearing_traces": 4248,
+     "root_span_ms_p99": 10001.19
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-19",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-20",
+   "scenario": "sc-20",
+   "path": "data/rcalab/sc-20",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "c759d9b9c0c80ea5f4885af599668b07ad9b3969b42ec2c511426eb464c4ccdd",
+    "meta.json": "3455d99c5d97e6ff19f9d7b1550d5018019d6106cfe810a370ceb884c4ed0e3c",
+    "meta_raw.json": "836dda4041ab252d52675e4a81cf3f0c4f5e5644c9040ef66aba428cdb1b3f72",
+    "traces.jsonl.zst": "9e76844fda53669135203a7761b41b7a2f56f111af377e048fa856b991d2f347"
+   },
+   "windows": {
+    "baseline": [
+     1792520837249565000,
+     1792521137372009000
+    ],
+    "fault": [
+     1792521138173895000,
+     1792521738353350000
+    ],
+    "recovery": [
+     1792521738353350000,
+     1792522040619093000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "mysql (Galera): one PXC node partitioned off the cluster",
+   "fault_class": "db-availability",
+   "effect_verified": false,
+   "counts": {
+    "all": {
+     "log_records": 10654,
+     "error_records": 779,
+     "records_with_trace_id": 10533,
+     "spans": 887548,
+     "traces": 200715,
+     "error_bearing_traces": 19023,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2680,
+     "error_records": 190,
+     "records_with_trace_id": 2650,
+     "spans": 221185,
+     "traces": 49932,
+     "error_bearing_traces": 4798,
+     "root_span_ms_p99": 10001.81
+    },
+    "fault": {
+     "log_records": 5254,
+     "error_records": 388,
+     "records_with_trace_id": 5194,
+     "spans": 440260,
+     "traces": 99609,
+     "error_bearing_traces": 9236,
+     "root_span_ms_p99": 10001.38
+    },
+    "recovery": {
+     "log_records": 2646,
+     "error_records": 195,
+     "records_with_trace_id": 2616,
+     "spans": 219828,
+     "traces": 49751,
+     "error_bearing_traces": 4577,
+     "root_span_ms_p99": 10001.29
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-20",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-21",
+   "scenario": "sc-21",
+   "path": "data/rcalab/sc-21",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "a82ba9fc4ee8f0f188c5f2138c265a981e1997e9df325d667499aa72cdee7c98",
+    "meta.json": "ea39539b573921f5a7bb382e271e61e2040b3f27b91d5a486a94e4e4c5c1a78c",
+    "meta_raw.json": "9c75cbc8666c70f17c135a1d907e2fac035255a20c62f8ad12f0709b947cb8dc",
+    "traces.jsonl.zst": "9ddbc6de14afefcbe7bd15b0258803b896996be72345182f602dc50a9c4b98d4"
+   },
+   "windows": {
+    "baseline": [
+     1792511181730843000,
+     1792511481815045000
+    ],
+    "fault": [
+     1792511482431162000,
+     1792512386592245000
+    ],
+    "recovery": [
+     1792512386592245000,
+     1792512688836488000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: requested checkpoints under a write-heavy batch",
+   "fault_class": "db-internal",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 9394,
+     "error_records": 984,
+     "records_with_trace_id": 9242,
+     "spans": 1291842,
+     "traces": 279981,
+     "error_bearing_traces": 16627,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 1289,
+     "error_records": 195,
+     "records_with_trace_id": 1259,
+     "spans": 258447,
+     "traces": 55846,
+     "error_bearing_traces": 3350,
+     "root_span_ms_p99": 9142.92
+    },
+    "fault": {
+     "log_records": 4545,
+     "error_records": 588,
+     "records_with_trace_id": 4455,
+     "spans": 779591,
+     "traces": 168238,
+     "error_bearing_traces": 9848,
+     "root_span_ms_p99": 9009.94
+    },
+    "recovery": {
+     "log_records": 3481,
+     "error_records": 197,
+     "records_with_trace_id": 3451,
+     "spans": 247124,
+     "traces": 54457,
+     "error_bearing_traces": 3329,
+     "root_span_ms_p99": 9100.88
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-21",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-22",
+   "scenario": "sc-22",
+   "path": "data/rcalab/sc-22",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "f5eac1a5a6356f0898c6aba170a6cfa86d085f6e42ba28a622c0ed190da7f8d2",
+    "meta.json": "1b1805627f64613f19c7dfadfcb4ba71c88406670c5d59ea65565c174df8d56a",
+    "meta_raw.json": "2d017a61141b5940e614ca8ae09653fcbbd3e88056bed9915bfe62d781402cb4",
+    "traces.jsonl.zst": "05b3ff343785065c6eaf38057726f00f2c03d9a80e8ca68adcb5741bae030b58"
+   },
+   "windows": {
+    "baseline": [
+     1792522078033596000,
+     1792522378100897000
+    ],
+    "fault": [
+     1792522378908438000,
+     1792522979302210000
+    ],
+    "recovery": [
+     1792522979302210000,
+     1792523283673400000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: standby replication lag under +800ms network delay",
+   "fault_class": "db-internal",
+   "effect_verified": false,
+   "counts": {
+    "all": {
+     "log_records": 10706,
+     "error_records": 773,
+     "records_with_trace_id": 10585,
+     "spans": 893048,
+     "traces": 205532,
+     "error_bearing_traces": 18494,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2597,
+     "error_records": 192,
+     "records_with_trace_id": 2567,
+     "spans": 218042,
+     "traces": 49452,
+     "error_bearing_traces": 4674,
+     "root_span_ms_p99": 10001.4
+    },
+    "fault": {
+     "log_records": 5384,
+     "error_records": 388,
+     "records_with_trace_id": 5324,
+     "spans": 442724,
+     "traces": 99849,
+     "error_bearing_traces": 8854,
+     "root_span_ms_p99": 10001.32
+    },
+    "recovery": {
+     "log_records": 2655,
+     "error_records": 187,
+     "records_with_trace_id": 2625,
+     "spans": 220742,
+     "traces": 49902,
+     "error_bearing_traces": 4762,
+     "root_span_ms_p99": 10002.02
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-22",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-23",
+   "scenario": "sc-23",
+   "path": "data/rcalab/sc-23",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "bb4ed7a9676b6516914400568f2a1693e7f0dce6b9e16a11020d50be4572dd0a",
+    "meta.json": "8a21fd47f547d2cc329abf855b41348fa516bfa569a3dff84efd097e1cda966a",
+    "meta_raw.json": "c0159af03e0ded7355be72b9eddcc2df67e6eab037def5b078a5531d6969311c",
+    "traces.jsonl.zst": "ad315a9df73c25cf743602228ad7ffe3c8134277e10244c9da65249ad1684b76"
+   },
+   "windows": {
+    "baseline": [
+     1792512729161845000,
+     1792513029219316000
+    ],
+    "fault": [
+     1792513029890976000,
+     1792513631576190000
+    ],
+    "recovery": [
+     1792513631576190000,
+     1792513935849618000
+    ]
+   },
+   "culprit_service": "product-catalog",
+   "culprit_component": "postgres: stale planner statistics after a large data change",
+   "fault_class": "db-resource",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 13138,
+     "error_records": 790,
+     "records_with_trace_id": 13017,
+     "spans": 999992,
+     "traces": 219092,
+     "error_bearing_traces": 13521,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2868,
+     "error_records": 195,
+     "records_with_trace_id": 2838,
+     "spans": 250994,
+     "traces": 54840,
+     "error_bearing_traces": 3398,
+     "root_span_ms_p99": 9465.69
+    },
+    "fault": {
+     "log_records": 6765,
+     "error_records": 392,
+     "records_with_trace_id": 6705,
+     "spans": 493184,
+     "traces": 108099,
+     "error_bearing_traces": 6634,
+     "root_span_ms_p99": 9303.95
+    },
+    "recovery": {
+     "log_records": 3422,
+     "error_records": 199,
+     "records_with_trace_id": 3391,
+     "spans": 249006,
+     "traces": 54626,
+     "error_bearing_traces": 3371,
+     "root_span_ms_p99": 9219.71
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-23",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-24",
+   "scenario": "sc-24",
+   "path": "data/rcalab/sc-24",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "a89e825a0ecb59ded15835cf959cd66d3d99cc2c3221dfb2615160facb05d3c0",
+    "meta.json": "99c9191fa44fdd78ae0de4e1cef064bc44f3c3703fd13f2c8b5511b87ceb136a",
+    "meta_raw.json": "16a76c6c2beeb945ee53924596323d2886eec68f874f83681d3a01d90a0031bb",
+    "traces.jsonl.zst": "fe43941ca6af6a3caff68a1c0dbd48eb182d0a33f7faa375b56b092d2ac61168"
+   },
+   "windows": {
+    "baseline": [
+     1792513971653956000,
+     1792514271734161000
+    ],
+    "fault": [
+     1792514272399388000,
+     1792515175226916000
+    ],
+    "recovery": [
+     1792515175226916000,
+     1792515481576411000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: table bloat (autovacuum disabled + churn), latent",
+   "fault_class": "db-internal",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 16717,
+     "error_records": 987,
+     "records_with_trace_id": 16565,
+     "spans": 1227285,
+     "traces": 270058,
+     "error_bearing_traces": 16756,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 3364,
+     "error_records": 196,
+     "records_with_trace_id": 3334,
+     "spans": 244431,
+     "traces": 53704,
+     "error_bearing_traces": 3266,
+     "root_span_ms_p99": 9264.23
+    },
+    "fault": {
+     "log_records": 10001,
+     "error_records": 586,
+     "records_with_trace_id": 9910,
+     "spans": 731465,
+     "traces": 161000,
+     "error_bearing_traces": 9912,
+     "root_span_ms_p99": 9394.24
+    },
+    "recovery": {
+     "log_records": 3274,
+     "error_records": 199,
+     "records_with_trace_id": 3244,
+     "spans": 244417,
+     "traces": 53868,
+     "error_bearing_traces": 3466,
+     "root_span_ms_p99": 9588.8
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-24",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-25",
+   "scenario": "sc-25",
+   "path": "data/rcalab/sc-25",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "e4950f1494ca0babb9ef1485141e2bf6f2b8da234879d5481599e58b69db0a8a",
+    "meta.json": "8a5d2a259d99ae51499649769300e33cf877da7d345d176487a792662482c220",
+    "meta_raw.json": "63a1f8673b045fc3e5bd210c69c13cf31619e7aa50bd784918043979f74a9d84",
+    "traces.jsonl.zst": "35afcc90e68ff24c57cfbba5a1b705d4bd7d4a68732830658d10ec5165c13a1a"
+   },
+   "windows": {
+    "baseline": [
+     1792515522988462000,
+     1792515823064448000
+    ],
+    "fault": [
+     1792515824003400000,
+     1792516727918456000
+    ],
+    "recovery": [
+     1792516727918456000,
+     1792517034296401000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: vacuum held back by a long-running transaction, latent",
+   "fault_class": "db-internal",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 16087,
+     "error_records": 985,
+     "records_with_trace_id": 15935,
+     "spans": 1206783,
+     "traces": 266688,
+     "error_bearing_traces": 17765,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 3179,
+     "error_records": 194,
+     "records_with_trace_id": 3149,
+     "spans": 237542,
+     "traces": 52719,
+     "error_bearing_traces": 3596,
+     "root_span_ms_p99": 10000.43
+    },
+    "fault": {
+     "log_records": 9630,
+     "error_records": 587,
+     "records_with_trace_id": 9540,
+     "spans": 721361,
+     "traces": 159107,
+     "error_bearing_traces": 10418,
+     "root_span_ms_p99": 9790.05
+    },
+    "recovery": {
+     "log_records": 3192,
+     "error_records": 198,
+     "records_with_trace_id": 3161,
+     "spans": 241624,
+     "traces": 53492,
+     "error_bearing_traces": 3617,
+     "root_span_ms_p99": 10000.36
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-25",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-26",
+   "scenario": "sc-26",
+   "path": "data/rcalab/sc-26",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "6503403dc92a56696040cc8b218fa22a2aa8082e648f8e115b4887d5360b6a11",
+    "meta.json": "348925cb1a63c96c1fc68c80200e2d8163c0e3ef60875338afaa07b49d71621c",
+    "meta_raw.json": "d09f7be067cbda56e69876fbe6ea46bf35474439e61cc7554a5ece962069204a",
+    "traces.jsonl.zst": "9efcf1f9db54631db61aed70955e0b69b326106cbfdb92155b2bc166bf7116a7"
+   },
+   "windows": {
+    "baseline": [
+     1792509903359513000,
+     1792510203441239000
+    ],
+    "fault": [
+     1792510204114151000,
+     1792510807749246000
+    ],
+    "recovery": [
+     1792510807749246000,
+     1792511144997953000
+    ]
+   },
+   "culprit_service": "order-service",
+   "culprit_component": "mysql: dropped idx_orders_user_created (full scans per request)",
+   "fault_class": "db-resource",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 8342,
+     "error_records": 809,
+     "records_with_trace_id": 8217,
+     "spans": 1098291,
+     "traces": 236549,
+     "error_bearing_traces": 13514,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 825,
+     "error_records": 194,
+     "records_with_trace_id": 795,
+     "spans": 265435,
+     "traces": 56826,
+     "error_bearing_traces": 3227,
+     "root_span_ms_p99": 8775.74
+    },
+    "fault": {
+     "log_records": 6281,
+     "error_records": 390,
+     "records_with_trace_id": 6221,
+     "spans": 528194,
+     "traces": 114473,
+     "error_bearing_traces": 6556,
+     "root_span_ms_p99": 8888.22
+    },
+    "recovery": {
+     "log_records": 1161,
+     "error_records": 220,
+     "records_with_trace_id": 1127,
+     "spans": 297397,
+     "traces": 63714,
+     "error_bearing_traces": 3624,
+     "root_span_ms_p99": 8543.97
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-26",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-27",
+   "scenario": "sc-27",
+   "path": "data/rcalab/sc-27",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "9dc115deb3aa401e5d0fff1cbc24b6698713f31a6c372baf21b7ca00d55730f8",
+    "meta.json": "1471d656b4f724209830efada1de7710038dae0ef963de7bf050c941a06d9a2a",
+    "meta_raw.json": "5c82f3a2a149aac82cccb24bff4fe47ea2657b29757183bf2550436a300acc72",
+    "traces.jsonl.zst": "6927e545eb70884fc278d87e6fb0180884f6523169adaf77aafc45ecbb75a2b5"
+   },
+   "windows": {
+    "baseline": [
+     1792517074773532000,
+     1792517374857146000
+    ],
+    "fault": [
+     1792517375833842000,
+     1792518278483767000
+    ],
+    "recovery": [
+     1792518278483767000,
+     1792518589003792000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: transaction-id wraparound risk (freezing blocked), latent",
+   "fault_class": "db-internal",
+   "effect_verified": true,
+   "counts": {
+    "all": {
+     "log_records": 14498,
+     "error_records": 972,
+     "records_with_trace_id": 14345,
+     "spans": 1145027,
+     "traces": 257056,
+     "error_bearing_traces": 21709,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2904,
+     "error_records": 186,
+     "records_with_trace_id": 2874,
+     "spans": 228866,
+     "traces": 51238,
+     "error_bearing_traces": 3989,
+     "root_span_ms_p99": 10001.15
+    },
+    "fault": {
+     "log_records": 8610,
+     "error_records": 579,
+     "records_with_trace_id": 8520,
+     "spans": 677747,
+     "traces": 152232,
+     "error_bearing_traces": 13031,
+     "root_span_ms_p99": 10001.38
+    },
+    "recovery": {
+     "log_records": 2904,
+     "error_records": 200,
+     "records_with_trace_id": 2873,
+     "spans": 231647,
+     "traces": 52255,
+     "error_bearing_traces": 4543,
+     "root_span_ms_p99": 10001.37
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-27",
+   "legacy_note": null
+  },
+  {
+   "name": "sc-28",
+   "scenario": "sc-28",
+   "path": "data/rcalab/sc-28",
+   "status": "ok",
+   "format": "dataset-v1",
+   "files": {
+    "logs": "logs.jsonl.zst",
+    "traces": "traces.jsonl.zst"
+   },
+   "sha256": {
+    "logs.jsonl.zst": "64c0fd59c06cfea06ac5f45ac015b2079222a3310eb632877a3a8a3975578459",
+    "meta.json": "af8b85919b5d0e6744c16ef2233f965472d81807acc6c28535b11775a2f3c244",
+    "meta_raw.json": "a1e083eab5cfdcd8b12ad0a72505c16e98a7c7e1ac99e09b70aa4f4e1d9c3147",
+    "traces.jsonl.zst": "4b0297e297f8974bf49619bf5e8684f1299659de576e232cdbef96abd22fc761"
+   },
+   "windows": {
+    "baseline": [
+     1792523319739791000,
+     1792523619818470000
+    ],
+    "fault": [
+     1792523620508101000,
+     1792524221508859000
+    ],
+    "recovery": [
+     1792524221508859000,
+     1792524527946876000
+    ]
+   },
+   "culprit_service": null,
+   "culprit_component": "postgres: checkpoints stalled on a fenced standby",
+   "fault_class": "db-internal",
+   "effect_verified": false,
+   "counts": {
+    "all": {
+     "log_records": 10132,
+     "error_records": 768,
+     "records_with_trace_id": 10011,
+     "spans": 846585,
+     "traces": 193883,
+     "error_bearing_traces": 21817,
+     "root_span_ms_p99": null
+    },
+    "baseline": {
+     "log_records": 2550,
+     "error_records": 195,
+     "records_with_trace_id": 2520,
+     "spans": 215435,
+     "traces": 49084,
+     "error_bearing_traces": 4753,
+     "root_span_ms_p99": 10001.67
+    },
+    "fault": {
+     "log_records": 4871,
+     "error_records": 372,
+     "records_with_trace_id": 4811,
+     "spans": 402843,
+     "traces": 93083,
+     "error_bearing_traces": 11964,
+     "root_span_ms_p99": 10006.22
+    },
+    "recovery": {
+     "log_records": 2647,
+     "error_records": 195,
+     "records_with_trace_id": 2616,
+     "spans": 221925,
+     "traces": 50472,
+     "error_bearing_traces": 4858,
+     "root_span_ms_p99": 10001.4
+    }
+   },
+   "backup": "/Users/daemon1024/tokentax-backup/rcalab/sc-28",
+   "legacy_note": null
+  }
+ ],
+ "updated": "2026-10-20T19:29:05Z"
+}
