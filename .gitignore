@@ -14,6 +14,11 @@ results/runs/*.jsonl
 !results/runs/cloud_matrix_matched.jsonl
 !results/runs/cloud_matrix.jsonl
 !results/runs/incontext_baseline.jsonl
+!results/runs/request_forensics_v2.jsonl
+!results/runs/request_forensics_v2_rep2.jsonl
+!results/runs/request_forensics_v2_smoke.jsonl
+!results/runs/request_forensics_v2_local.jsonl
+!results/runs/model_probe.jsonl
 results/runs/*.parquet
 .pytest_cache/
 .ruff_cache/
